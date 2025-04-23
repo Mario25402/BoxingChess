@@ -25,6 +25,10 @@ class MyScene extends THREE.Scene {
 	constructor(myCanvas) {
 		super();
 
+
+		this.DETAIL_LEVEL = 20;
+
+
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
 		this.renderer = this.createRenderer(myCanvas);
 
@@ -51,31 +55,31 @@ class MyScene extends THREE.Scene {
 		// Por último creamos el modelo.
 		// El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
 		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-		this.model = new Rey(this.gui, "Controles del Rey");
+		this.model = new Rey(this.gui, "Controles del Rey", this.DETAIL_LEVEL);
 		this.model.position.set(2, 0, 0);
 		this.model.scale.set(0.4, 0.4, 0.4);
 		this.add(this.model);
 
-		this.model = new Alfil(this.gui, "Controles del Alfil");
+		this.model = new Alfil(this.gui, "Controles del Alfil", this.DETAIL_LEVEL);
 		this.model.scale.set(0.4, 0.4, 0.4);
 		this.model.position.set(-2, 0, 0);
 		this.add(this.model);
 
-		this.model = new Torre(this.gui, "Controles de la Torre");
+		this.model = new Torre(this.gui, "Controles de la Torre", this.DETAIL_LEVEL);
 		this.model.scale.set(1.1, 1.1, 1.1);
 		this.model.position.set(-6.5, 0, 0);
 		this.add(this.model);
 
-		this.model = new Peon(this.gui, "Controles del Peón");
+		this.model = new Peon(this.gui, "Controles del Peón", this.DETAIL_LEVEL);
 		this.model.position.set(4, 0, 0);
 		this.add(this.model);
 
-		this.model = new Caballo(this.gui, "Controles del Caballo")
+		this.model = new Caballo(this.gui, "Controles del Caballo", this.DETAIL_LEVEL);
 		this.model.rotateY(THREE.MathUtils.degToRad(90))
 		this.model.position.set(10, 0, 0)
 		this.add(this.model)
 
-		this.model = new Reina(this.gui, "Controles de la Reina");
+		this.model = new Reina(this.gui, "Controles de la Reina", this.DETAIL_LEVEL);
 		this.model.position.set(-11, 0, 0);
 		this.model.scale.set(0.4, 0.4, 0.4);
 		this.add(this.model);
@@ -105,7 +109,7 @@ class MyScene extends THREE.Scene {
 		this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
 		// Recuerda: Todas las unidades están en metros
 		// También se indica dónde se coloca
-		this.camera.position.set(4, 2, 4);
+		this.camera.position.set(14, 4, 14);
 		// Y hacia dónde mira
 		var look = new THREE.Vector3(0, 0, 0);
 		this.camera.lookAt(look);

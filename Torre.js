@@ -2,8 +2,10 @@ import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/three-bvh-csg.js'
 import { Guante } from './Guante.js';
 
+
+
 class Torre extends THREE.Object3D {
-	constructor(gui, titleGui) {
+	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
 		this.createGUI(gui, titleGui);
 
@@ -22,11 +24,11 @@ class Torre extends THREE.Object3D {
 		this.shape.lineTo(0, 2);
 		this.shape.lineTo(0, 0);
 
-		this.geometry = new THREE.LatheGeometry(this.shape.getPoints(20), 30, 0, Math.PI * 2);
+		this.geometry = new THREE.LatheGeometry(this.shape.getPoints(20), DETAIL_LEVEL, 0, Math.PI * 2);
 		this.geometry.scale(1, 1.5, 1);
 
 		// Hueco Arriba
-		this.cilindroGeo = new THREE.CylinderGeometry(0.4, 0.4, 1, 100);
+		this.cilindroGeo = new THREE.CylinderGeometry(0.4, 0.4, 1, DETAIL_LEVEL);
 		this.cilindroGeo.translate(0, 3, 0);
 
 		// Escalón 1
@@ -66,7 +68,7 @@ class Torre extends THREE.Object3D {
 		this.add(this.result);
 
 		// Guantes
-		const guantes = new Guante(gui);
+		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(-3.5, 2.2, 0)
 		guantes.guante2.position.set(3.5, 2.2, 0) 

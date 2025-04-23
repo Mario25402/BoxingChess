@@ -1,8 +1,9 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/three-bvh-csg.js'
 
+
 class Guante extends THREE.Object3D {
-    constructor(gui, titleGui) {
+    constructor(gui, titleGui, DETAIL_LEVEL) {
         super();
         this.createGUI(gui, titleGui);
 
@@ -24,10 +25,10 @@ class Guante extends THREE.Object3D {
         this.shape.quadraticCurveTo(-1.13, 0.49, -1, 0);
         this.shape.lineTo(0, 0);
 
-        this.cilindroGeo3 = new THREE.CylinderGeometry(0.4, 0.3, 1.75, 100);
+        this.cilindroGeo3 = new THREE.CylinderGeometry(0.4, 0.3, 1.75, DETAIL_LEVEL);
         this.cilMesh3 = new THREE.Mesh(this.cilindroGeo3, mat);
 
-        this.esferaGeo = new THREE.SphereGeometry(0.4, 100, 100);
+        this.esferaGeo = new THREE.SphereGeometry(0.4, DETAIL_LEVEL, DETAIL_LEVEL);
         this.esferaGeo.translate(0, 0.87, 0);
 
         var options = {
@@ -35,12 +36,12 @@ class Guante extends THREE.Object3D {
             bevelEnabled: true,
             bevelThickness: 0.8,
             bevelSize: 0.3,
-            bevelSegments: 10,
+            bevelSegments: DETAIL_LEVEL,
         };
         var geometry = new THREE.ExtrudeGeometry(this.shape, options);
 
 
-        this.cilGeo = new THREE.CylinderGeometry(1.05, 1.2, 0.95, 100);
+        this.cilGeo = new THREE.CylinderGeometry(1.05, 1.2, 0.95, DETAIL_LEVEL);
         this.cilGeo.translate(-0.65, -0.4, 0.25);
         this.cilGeo.scale(0.7, 1, 1);
 
@@ -50,15 +51,15 @@ class Guante extends THREE.Object3D {
         this.cilBrush = new CSG.Brush(this.cilGeo, mat);
 
         // Brazos
-		const brazoInf = new THREE.CylinderGeometry(0.3, 0.3, 3, 20);
+		const brazoInf = new THREE.CylinderGeometry(0.3, 0.3, 3, 3);
 		brazoInf.translate(-0.5, -2.2, 0.2);
         const brazoInfBrush = new CSG.Brush(brazoInf, mat);
 
-		const codo = new THREE.SphereGeometry(0.5);
+		const codo = new THREE.SphereGeometry(0.5, DETAIL_LEVEL, DETAIL_LEVEL);
 		codo.translate(-0.5, -3.8, 0.2);
         const codoBrush = new CSG.Brush(codo, mat);
 
-        const brazoSup = new THREE.CylinderGeometry(0.3, 0.3, 5, 20);
+        const brazoSup = new THREE.CylinderGeometry(0.3, 0.3, 5, 3);
         brazoSup.rotateX(THREE.MathUtils.degToRad(-30));
         brazoSup.translate(-0.5, -6, 1.5);
         const brazoSupBrush = new CSG.Brush(brazoSup, mat);

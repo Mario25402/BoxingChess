@@ -3,8 +3,10 @@ import * as CSG from '../libs/three-bvh-csg.js'
 import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
 
+
+
 class Alfil extends THREE.Object3D {
-	constructor(gui, titleGui) {
+	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
 		this.createGUI(gui, titleGui);
 
@@ -25,7 +27,7 @@ class Alfil extends THREE.Object3D {
 		shape.lineTo(0, 6);
 		shape.lineTo(0, 0);
 
-		let geom = new THREE.LatheGeometry(shape.getPoints(), 30);
+		let geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL);
 		const cuerpo = new CSG.Brush(geom, material);
 
 		// Cabeza
@@ -36,13 +38,13 @@ class Alfil extends THREE.Object3D {
 		shape.lineTo(0, 4);
 		shape.lineTo(0, 0);
 
-		geom = new THREE.LatheGeometry(shape.getPoints());
+		geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL);
 		geom.scale(0.7, 0.7, 0.7);
 		geom.translate(0, 7, 0);
 		const cabeza = new CSG.Brush(geom, material);
 
 		// Punta
-		geom = new THREE.SphereGeometry(0.35);
+		geom = new THREE.SphereGeometry(0.35, DETAIL_LEVEL, DETAIL_LEVEL);
 		geom.scale(0.7, 0.7, 0.7);
 		geom.translate(0, 9.9, 0);
 		const esfera = new CSG.Brush(geom, material);
@@ -55,19 +57,19 @@ class Alfil extends THREE.Object3D {
 		const corte = new CSG.Brush(geom, material);
 
 		// Collar 1
-		geom = new THREE.TorusGeometry(0.9, 0.3);
+		geom = new THREE.TorusGeometry(0.9, 0.3, DETAIL_LEVEL, DETAIL_LEVEL);
 		geom.rotateX(MathUtils.degToRad(90));
 		geom.translate(0, 6.25, 0);
 		const collar1 = new CSG.Brush(geom, material);
 
 		// Collar 2
-		geom = new THREE.TorusGeometry(0.7, 0.3);
+		geom = new THREE.TorusGeometry(0.7, 0.3, DETAIL_LEVEL, DETAIL_LEVEL);
 		geom.rotateX(MathUtils.degToRad(90));
 		geom.translate(0, 6.55, 0);
 		const collar2 = new CSG.Brush(geom, material);
 
 		// Collar 3
-		geom = new THREE.TorusGeometry(0.5, 0.3);
+		geom = new THREE.TorusGeometry(0.5, 0.3, DETAIL_LEVEL, DETAIL_LEVEL);
 		geom.rotateX(MathUtils.degToRad(90));
 		geom.scale(1.1, 0.35, 1.1);
 		geom.translate(0, 6.9, 0);
@@ -85,7 +87,7 @@ class Alfil extends THREE.Object3D {
 		this.add(alfil);
 
 		// Guantes
-		const guantes = new Guante(gui);
+		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
 		guantes.guante.position.set(-3.5, 3, 0)
 		guantes.guante2.position.set(3.5, 3, 0)
 		

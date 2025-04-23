@@ -3,8 +3,10 @@ import * as CSG from '../libs/three-bvh-csg.js'
 import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
 
+
+
 class Reina extends THREE.Object3D {
-	constructor(gui, titleGui) {
+	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
 		this.createGUI(gui, titleGui);
 
@@ -27,7 +29,7 @@ class Reina extends THREE.Object3D {
 		shape.lineTo(0, alturaCuerpo)
 		shape.lineTo(0, 0)
 
-		let geom = new THREE.LatheGeometry(shape.getPoints(), 30)
+		let geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL)
 		const cuerpo = new CSG.Brush(geom, material)
 
 		// Cuello
@@ -39,7 +41,7 @@ class Reina extends THREE.Object3D {
 		shape.lineTo(1, 0.5);
 		shape.lineTo(0, 0.5)
 
-		geom = new THREE.LatheGeometry(shape.getPoints(), 30);
+		geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL);
 		geom.translate(0, alturaCuerpo, 0)
 		const cuello = new CSG.Brush(geom, material);
 		
@@ -52,7 +54,7 @@ class Reina extends THREE.Object3D {
 		const radio = 1.5;
 		const amplitud = 0;
 		const frecuencia = 6;
-		const numPuntos = 200;
+		const numPuntos = 100;
 		
 		for (let i = 0; i <= numPuntos; i++){
 			const angulo = (i / numPuntos) * Math.PI * 2;
@@ -95,7 +97,7 @@ class Reina extends THREE.Object3D {
 		this.add(rey)
 
 		// Guantes
-		const guantes = new Guante(gui);
+		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
 		guantes.guante.position.set(-3.5, 3, 0)
 		guantes.guante2.position.set(3.5, 3, 0) 
 		

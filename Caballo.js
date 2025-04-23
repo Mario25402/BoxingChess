@@ -3,7 +3,7 @@ import { OBJLoader } from '../libs/OBJLoader.js'
 import { Guante } from './Guante.js';
 
 class Caballo extends THREE.Object3D {
-	constructor(gui, titleGui) {
+	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
 		this.createGUI(gui, titleGui);
 
@@ -23,7 +23,7 @@ class Caballo extends THREE.Object3D {
 		}, null, null);
 
 		// Guantes
-		const guantes = new Guante(gui);
+		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		//guantes.position.set(0, THREE.MathUtils.degToRad(90), 0);
 		guantes.rotateY(THREE.MathUtils.degToRad(-90));

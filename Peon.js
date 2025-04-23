@@ -3,8 +3,10 @@ import * as CSG from '../libs/three-bvh-csg.js'
 import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
 
+
+
 class Peon extends THREE.Object3D {
-	constructor(gui, titleGui) {
+	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
 		this.createGUI(gui, titleGui);
 
@@ -22,12 +24,12 @@ class Peon extends THREE.Object3D {
 		this.shape.lineTo(0, 1.5);
 		this.shape.lineTo(0, 0);
 
-		this.geometry = new THREE.LatheGeometry(this.shape.getPoints(20), 30, 0, Math.PI * 2);
+		this.geometry = new THREE.LatheGeometry(this.shape.getPoints(20), DETAIL_LEVEL, 0, Math.PI * 2);
 		this.geometry.scale(1, 1.25, 1);
 		this.shapeBrush = new CSG.Brush(this.geometry, material);
 
 		// Cabeza
-		this.esferaGeo = new THREE.SphereGeometry(0.65, 100, 100);
+		this.esferaGeo = new THREE.SphereGeometry(0.65, DETAIL_LEVEL, DETAIL_LEVEL);
 		this.esferaGeo.translate(0, 2.25, 0);
 		this.esferaBrush = new CSG.Brush(this.esferaGeo, material);
 
@@ -37,7 +39,7 @@ class Peon extends THREE.Object3D {
 		this.add(this.peon);
 
 		// Guantes
-		const guantes = new Guante(gui);
+		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(2.3, 1.62, 0)
 		guantes.guante2.position.set(8.9, 1.62, 0) 

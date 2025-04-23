@@ -3,8 +3,10 @@ import * as CSG from '../libs/three-bvh-csg.js'
 import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
 
+
+
 class Rey extends THREE.Object3D {
-	constructor(gui, titleGui) {
+	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
 		this.createGUI(gui, titleGui);
 
@@ -26,16 +28,16 @@ class Rey extends THREE.Object3D {
 		shape.lineTo(0, 8.25)
 		shape.lineTo(0, 0)
 
-		let geom = new THREE.LatheGeometry(shape.getPoints(), 30)
+		let geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL)
 		const cuerpo = new CSG.Brush(geom, material)
 
 		// Cuello
-		geom = new THREE.CylinderGeometry(1.5, 1, 1.25, 50)
+		geom = new THREE.CylinderGeometry(1.5, 1, 1.25, DETAIL_LEVEL)
 		geom.translate(0, 8.875, 0)
 		const cuello = new CSG.Brush(geom, material)
 
 		// Anillo
-		geom = new THREE.TorusGeometry(0.5, 0.1);
+		geom = new THREE.TorusGeometry(0.5, 0.1, DETAIL_LEVEL, DETAIL_LEVEL);
 		geom.rotateX(MathUtils.degToRad(90));
 		geom.scale(0.8, 0.8, 0.8)
 		geom.translate(0, 9.5, 0)
@@ -49,7 +51,7 @@ class Rey extends THREE.Object3D {
 		shape.lineTo(0, 1);
 		shape.lineTo(0, 0);
 
-		geom = new THREE.LatheGeometry(shape.getPoints(), 50)
+		geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL)
 		geom.scale(0.8, 0.8, 0.8)
 
 		const aspa1 = geom.clone()
@@ -88,7 +90,7 @@ class Rey extends THREE.Object3D {
 		this.add(rey)
 
 		// Guantes
-		const guantes = new Guante(gui);
+		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
 		guantes.guante.position.set(-3.5, 3, 0)
 		guantes.guante2.position.set(3.5, 3, 0) 
 		
