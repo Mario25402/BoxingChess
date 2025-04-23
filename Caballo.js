@@ -1,6 +1,6 @@
 import * as THREE from '../libs/three.module.js'
-import { MTLLoader } from '../libs/MTLLoader.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
+import { Guante } from './Guante.js';
 
 class Caballo extends THREE.Object3D {
 	constructor(gui, titleGui) {
@@ -9,17 +9,28 @@ class Caballo extends THREE.Object3D {
 
         const material = new THREE.MeshNormalMaterial();
 
-		var matlLoader = new MTLLoader();
 		var objLoader = new OBJLoader();
 
-		matlLoader.load('./obj/caballo.mtl', (materials) => {
-			objLoader.setMaterials(materials);
-			objLoader.load('./obj/caballo.obj', (object) => {
-				object.position.set(0, 1, 0);
-                object.scale.set(0.05, 0.05, 0.05)
-				this.add(object);
-			}, null, null);
-		});
+		objLoader.load('./obj/caballo.obj', (object) => {
+			object.traverse((child) => {
+				if (child.isMesh) {
+					child.material = material; // Asignar el material
+				}
+			});
+			object.position.set(0, 0, 0);
+			object.scale.set(0.05, 0.05, 0.05)
+			this.add(object);
+		}, null, null);
+
+		// Guantes
+		const guantes = new Guante(gui);
+		guantes.scale.set(0.4, 0.4, 0.4);
+		//guantes.position.set(0, THREE.MathUtils.degToRad(90), 0);
+		guantes.rotateY(THREE.MathUtils.degToRad(-90));
+		guantes.guante.position.set(-3, 2.2, -1)
+		guantes.guante2.position.set(3, 2.2, -1) 
+		
+		this.add(guantes);
 	}
 
 	createGUI(gui, titleGui) {
