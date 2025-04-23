@@ -15,7 +15,7 @@ class Caballo extends THREE.Object3D {
 		matlLoader.load('./obj/caballo.mtl', (materials) => {
 			objLoader.setMaterials(materials);
 			objLoader.load('./obj/caballo.obj', (object) => {
-				object.position.set(0, 0, 0);
+				object.position.set(0, 1, 0);
                 object.scale.set(0.05, 0.05, 0.05)
 				this.add(object);
 			}, null, null);
