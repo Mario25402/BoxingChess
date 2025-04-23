@@ -1,20 +1,14 @@
 
 // Clases de la biblioteca
 
-import * as THREE from '../libs/three.module.js'
-import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
-import Stats from '../libs/stats.module.js'
+import * as THREE from '../../libs/three.module.js'
+import { GUI } from '../../libs/dat.gui.module.js'
+import { TrackballControls } from '../../libs/TrackballControls.js'
+import Stats from '../../libs/stats.module.js'
 
 // Clases de mi proyecto
 
-import { Rey } from './Rey.js'
-import { Alfil } from './Alfil.js'
-import { Torre } from './Torre.js'
-import { Peon } from './Peon.js'
-import { Caballo } from './Caballo.js'
-import { Reina } from './Reina.js'
-
+import { Rey } from '../Rey.js'
 
 /// La clase fachada del modelo
 /**
@@ -52,31 +46,6 @@ class MyScene extends THREE.Scene {
 		// El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
 		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
 		this.model = new Rey(this.gui, "Controles del Rey");
-		this.model.position.set(2, 0, 0);
-		this.model.scale.set(0.4, 0.4, 0.4);
-		this.add(this.model);
-
-		this.model = new Alfil(this.gui, "Controles del Alfil");
-		this.model.scale.set(0.4, 0.4, 0.4);
-		this.model.position.set(-2, 0, 0);
-		this.add(this.model);
-
-		this.model = new Torre(this.gui, "Controles de la Torre");
-		this.model.scale.set(1.1, 1.1, 1.1);
-		this.model.position.set(-6.5, 0, 0);
-		this.add(this.model);
-
-		this.model = new Peon(this.gui, "Controles del Peón");
-		this.model.position.set(4, 0, 0);
-		this.add(this.model);
-
-		this.model = new Caballo(this.gui, "Controles del Caballo")
-		this.model.rotateY(THREE.MathUtils.degToRad(90))
-		this.model.position.set(10, 0, 0)
-		this.add(this.model)
-
-		this.model = new Reina(this.gui, "Controles de la Reina");
-		this.model.position.set(-11, 0, 0);
 		this.model.scale.set(0.4, 0.4, 0.4);
 		this.add(this.model);
 	}

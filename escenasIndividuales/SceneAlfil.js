@@ -1,14 +1,14 @@
 
 // Clases de la biblioteca
 
-import * as THREE from '../libs/three.module.js'
-import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
-import Stats from '../libs/stats.module.js'
+import * as THREE from '../../libs/three.module.js'
+import { GUI } from '../../libs/dat.gui.module.js'
+import { TrackballControls } from '../../libs/TrackballControls.js'
+import Stats from '../../libs/stats.module.js'
 
 // Clases de mi proyecto
 
-import { Torre } from './Torre.js'
+import { Alfil } from '../Alfil.js'
 
 
 /// La clase fachada del modelo
@@ -46,7 +46,8 @@ class MyScene extends THREE.Scene {
 		// Por último creamos el modelo.
 		// El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
 		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-		this.model = new Torre(this.gui, "Controles de la Torre");
+		this.model = new Alfil(this.gui, "Controles del Alfil");
+		this.model.scale.set(0.4, 0.4, 0.4);
 		this.add(this.model);
 	}
 
