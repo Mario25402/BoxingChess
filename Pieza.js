@@ -7,33 +7,48 @@ import { Peon } from './Peon.js'
 import { Caballo } from './Caballo.js'
 import { Reina } from './Reina.js'
 
-class Pieza {
-    constructor(pieza, casillaActual, equipo, DETAIL_LEVEL){
+class Pieza extends THREE.Object3D{
+    constructor(pieza, casillaActual, isBlanca, DETAIL_LEVEL){
+        super();
+
         this.casillaActual = casillaActual
-        this.equipo = equipo // True = blancas, False = negras
-        this.pieza = new Peon(DETAIL_LEVEL);
 
         switch (pieza) {
             case "Rey":
-                this.pieza = new Rey(DETAIL_LEVEL);
+                this.pieza = new Rey(DETAIL_LEVEL, isBlanca);
+                this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
 
             case "Reina":
-                this.pieza = new Reina(DETAIL_LEVEL);
+                this.pieza = new Reina(DETAIL_LEVEL, isBlanca);
+                this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
             
             case "Caballo":
-                this.pieza = new Caballo(DETAIL_LEVEL);
+                this.pieza = new Caballo(DETAIL_LEVEL, isBlanca);
+                this.pieza.rotateY(THREE.MathUtils.degToRad(180));
+                this.pieza.scale.set(0.3, 0.3, 0.3)
                 break;
 
             case "Torre":
-                this.pieza = new Torre(DETAIL_LEVEL);
+                this.pieza = new Torre(DETAIL_LEVEL, isBlanca);
+                this.pieza.scale.set(0.3, 0.3, 0.3)
                 break;
 
             case "Alfil":
-                this.pieza = new Alfil(DETAIL_LEVEL);
+                this.pieza = new Alfil(DETAIL_LEVEL, isBlanca);
+                this.pieza.scale.set(0.11, 0.11, 0.11)
+                break;
+            
+            case "Peon":
+                this.pieza = new Peon(DETAIL_LEVEL, isBlanca);
+                this.pieza.scale.set(0.3, 0.3, 0.3)
                 break;
         }
+
+        if (!isBlanca) this.pieza.rotateY(THREE.MathUtils.degToRad(180));
+
+        this.add(this.pieza);
     }
 }
 

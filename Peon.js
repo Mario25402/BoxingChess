@@ -3,14 +3,15 @@ import * as CSG from '../libs/three-bvh-csg.js'
 import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
 
-
-
 class Peon extends THREE.Object3D {
-	constructor(gui, titleGui, DETAIL_LEVEL) {
+	constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
 		super();
 
-		const material = new THREE.MeshNormalMaterial();
+		let material;
 		const evaluador = new CSG.Evaluator();
+
+		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
+		else material = new THREE.MeshStandardMaterial({color: 0x000000});
 
 		// Cuerpo
 		this.shape = new THREE.Shape();
@@ -34,14 +35,14 @@ class Peon extends THREE.Object3D {
 
 		// Unión
 		this.peon = evaluador.evaluate(this.shapeBrush, this.esferaBrush, CSG.ADDITION);
-		this.peon.translateX(2.25);
 		this.add(this.peon);
 
 		// Guantes
-		const guantes = new Guante(DETAIL_LEVEL);
+		const guantes = new Guante(DETAIL_LEVEL, isBlanca);
+		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.scale.set(0.4, 0.4, 0.4);
-		guantes.guante.position.set(2.3, 1.62, 0)
-		guantes.guante2.position.set(8.9, 1.62, 0) 
+		guantes.guante.position.set(-3.2, 1.62, 0)
+		guantes.guante2.position.set(3.2, 1.62, 0)
 		
 		this.add(guantes);
 	}

@@ -27,9 +27,6 @@ class MyScene extends THREE.Scene {
 	constructor(myCanvas) {
 		super();
 
-		// Se define el nivel de detalle de las piezas.
-		this.DETAIL_LEVEL = 5;
-
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
 		this.renderer = this.createRenderer(myCanvas);
 

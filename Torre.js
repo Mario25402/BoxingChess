@@ -1,15 +1,17 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/three-bvh-csg.js'
 import { Guante } from './Guante.js';
-
-
+import { MathUtils } from '../libs/three.module.js';
 
 class Torre extends THREE.Object3D {
-	constructor(gui, titleGui, DETAIL_LEVEL) {
+	constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
 		super();
 
-		const material = new THREE.MeshNormalMaterial();
+		let material;
 		const evaluador = new CSG.Evaluator();
+
+		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
+		else material = new THREE.MeshStandardMaterial({color: 0x000000});
 
 		// Cuerpo
 		this.shape = new THREE.Shape();
@@ -67,7 +69,8 @@ class Torre extends THREE.Object3D {
 		this.add(this.result);
 
 		// Guantes
-		const guantes = new Guante(DETAIL_LEVEL);
+		const guantes = new Guante(DETAIL_LEVEL, isBlanca);
+		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(-3.5, 2.2, 0)
 		guantes.guante2.position.set(3.5, 2.2, 0) 

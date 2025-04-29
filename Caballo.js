@@ -3,13 +3,14 @@ import { OBJLoader } from '../libs/OBJLoader.js'
 import { Guante } from './Guante.js';
 
 class Caballo extends THREE.Object3D {
-	constructor(gui, titleGui, DETAIL_LEVEL) {
+	constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
 		super();
 
-        const material = new THREE.MeshNormalMaterial();
+		let material;
+		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
+		else material = new THREE.MeshStandardMaterial({color: 0x000000});
 
 		var objLoader = new OBJLoader();
-
 		objLoader.load('./obj/caballo.obj', (object) => {
 			object.traverse((child) => {
 				if (child.isMesh) {
@@ -22,9 +23,8 @@ class Caballo extends THREE.Object3D {
 		}, null, null);
 
 		// Guantes
-		const guantes = new Guante(DETAIL_LEVEL);
+		const guantes = new Guante(DETAIL_LEVEL, isBlanca);
 		guantes.scale.set(0.4, 0.4, 0.4);
-		//guantes.position.set(0, THREE.MathUtils.degToRad(90), 0);
 		guantes.rotateY(THREE.MathUtils.degToRad(-90));
 		guantes.guante.position.set(-3, 2.2, -1)
 		guantes.guante2.position.set(3, 2.2, -1) 

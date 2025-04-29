@@ -3,11 +3,17 @@ import * as CSG from '../libs/three-bvh-csg.js'
 
 
 class Guante extends THREE.Object3D {
-    constructor(gui, titleGui, DETAIL_LEVEL) {
+    constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
         super();
 
-        const mat = new THREE.MeshNormalMaterial({ transparent: true, opacity: 1 });
+        let material;
         const evaluador = new CSG.Evaluator();
+        const matRojo = new THREE.MeshStandardMaterial({color: 0xFF0000});
+
+        if (isBlanca)
+            material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
+        else
+            material = new THREE.MeshStandardMaterial({color: 0x000000});
 
         // Puño
         this.shape = new THREE.Shape();
@@ -25,7 +31,7 @@ class Guante extends THREE.Object3D {
         this.shape.lineTo(0, 0);
 
         this.cilindroGeo3 = new THREE.CylinderGeometry(0.4, 0.3, 1.75, DETAIL_LEVEL);
-        this.cilMesh3 = new THREE.Mesh(this.cilindroGeo3, mat);
+        this.cilMesh3 = new THREE.Mesh(this.cilindroGeo3, material);
 
         this.esferaGeo = new THREE.SphereGeometry(0.4, DETAIL_LEVEL, DETAIL_LEVEL);
         this.esferaGeo.translate(0, 0.87, 0);
@@ -44,24 +50,24 @@ class Guante extends THREE.Object3D {
         this.cilGeo.translate(-0.65, -0.4, 0.25);
         this.cilGeo.scale(0.7, 1, 1);
 
-        this.cilinBrush = new CSG.Brush(this.cilindroGeo3, mat);
-        this.esferaBrush = new CSG.Brush(this.esferaGeo, mat);
-        this.shapeBrush = new CSG.Brush(geometry, mat);
-        this.cilBrush = new CSG.Brush(this.cilGeo, mat);
+        this.cilinBrush = new CSG.Brush(this.cilindroGeo3, matRojo);
+        this.esferaBrush = new CSG.Brush(this.esferaGeo, matRojo);
+        this.shapeBrush = new CSG.Brush(geometry, matRojo);
+        this.cilBrush = new CSG.Brush(this.cilGeo, matRojo);
 
         // Brazos
 		const brazoInf = new THREE.CylinderGeometry(0.3, 0.3, 3, 3);
 		brazoInf.translate(-0.5, -2.2, 0.2);
-        const brazoInfBrush = new CSG.Brush(brazoInf, mat);
+        const brazoInfBrush = new CSG.Brush(brazoInf, material);
 
 		const codo = new THREE.SphereGeometry(0.5, DETAIL_LEVEL, DETAIL_LEVEL);
 		codo.translate(-0.5, -3.8, 0.2);
-        const codoBrush = new CSG.Brush(codo, mat);
+        const codoBrush = new CSG.Brush(codo, material);
 
         const brazoSup = new THREE.CylinderGeometry(0.3, 0.3, 5, 3);
         brazoSup.rotateX(THREE.MathUtils.degToRad(-30));
         brazoSup.translate(-0.5, -6, 1.5);
-        const brazoSupBrush = new CSG.Brush(brazoSup, mat);
+        const brazoSupBrush = new CSG.Brush(brazoSup, material);
 
         // Unión
         this.dedo = evaluador.evaluate(this.cilinBrush, this.esferaBrush, CSG.ADDITION);
