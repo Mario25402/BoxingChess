@@ -8,7 +8,6 @@ import { Guante } from './Guante.js';
 class Peon extends THREE.Object3D {
 	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
-		this.createGUI(gui, titleGui);
 
 		const material = new THREE.MeshNormalMaterial();
 		const evaluador = new CSG.Evaluator();
@@ -39,26 +38,12 @@ class Peon extends THREE.Object3D {
 		this.add(this.peon);
 
 		// Guantes
-		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
+		const guantes = new Guante(DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(2.3, 1.62, 0)
 		guantes.guante2.position.set(8.9, 1.62, 0) 
 		
 		this.add(guantes);
-	}
-	
-	createGUI(gui, titleGui) {
-		this.guiControls = {
-			reset: () => {
-				this.update();
-			}
-		}
-
-		var folder = gui.addFolder(titleGui);
-		folder.add(this.guiControls, 'reset').name('[ Reset ]');
-	}
-
-	update() {
 	}
 }
 

@@ -26,7 +26,7 @@ class MyScene extends THREE.Scene {
 		super();
 
 
-		this.DETAIL_LEVEL = 20;
+		this.DETAIL_LEVEL = 5;
 
 
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
@@ -45,6 +45,9 @@ class MyScene extends THREE.Scene {
 
 		// Tendremos una cámara con un control de movimiento con el ratón
 		this.createCamera();
+
+		// Creamos el tablero
+		this.createBoard();
 
 		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
 		// Todas las unidades están en metros
@@ -123,6 +126,28 @@ class MyScene extends THREE.Scene {
 		this.cameraControl.panSpeed = 0.5;
 		// Debe orbitar con respecto al punto de mira de la cámara
 		this.cameraControl.target = look;
+	}
+
+	createBoard() {
+		// El suelo es un Mesh, necesita una geometría y un material.
+		
+		// La geometría es una caja con muy poca altura
+		var geometryGround = new THREE.BoxGeometry (30, 0.5, 30);
+		geometryGround.translate(0, -0.25, 0);
+		
+		// El material se hará con una textura de madera
+		var texture = new THREE.TextureLoader().load('./imgs/board.png');
+		var materialGround = new THREE.MeshStandardMaterial ({map: texture});
+		
+		// Ya se puede construir el Mesh
+		var ground = new THREE.Mesh (geometryGround, materialGround);
+		
+		// Todas las figuras se crean centradas en el origen.
+		// El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
+		ground.position.y = -0.01;
+		
+		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
+		this.add (ground);
 	}
 
 	createGUI() {
@@ -242,7 +267,7 @@ class MyScene extends THREE.Scene {
 		this.cameraControl.update();
 
 		// Se actualiza el resto del modelo
-		this.model.update();
+		//this.model.update();
 
 		// Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
 		this.renderer.render(this, this.getCamera());

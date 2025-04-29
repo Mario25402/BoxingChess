@@ -5,7 +5,6 @@ import * as CSG from '../libs/three-bvh-csg.js'
 class Guante extends THREE.Object3D {
     constructor(gui, titleGui, DETAIL_LEVEL) {
         super();
-        this.createGUI(gui, titleGui);
 
         const mat = new THREE.MeshNormalMaterial({ transparent: true, opacity: 1 });
         const evaluador = new CSG.Evaluator();
@@ -93,25 +92,6 @@ class Guante extends THREE.Object3D {
 
         this.add(this.guante2);
         this.add(this.guante);
-    }
-
-    scaleShape(shape, scale) {
-        var points = shape.extractPoints().shape;
-        var scaledPoints = points.map(p => new THREE.Vector2(p.x * scale, p.y * scale));
-        return new THREE.Shape(scaledPoints);
-    }
-
-    createGUI(gui, titleGui) {
-		this.guiControls = {
-			reset: () => {
-				this.update();
-			}
-		}
-
-		
-	}
-
-    update() {
     }
 }
 

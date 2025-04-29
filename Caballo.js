@@ -5,7 +5,6 @@ import { Guante } from './Guante.js';
 class Caballo extends THREE.Object3D {
 	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
-		this.createGUI(gui, titleGui);
 
         const material = new THREE.MeshNormalMaterial();
 
@@ -23,7 +22,7 @@ class Caballo extends THREE.Object3D {
 		}, null, null);
 
 		// Guantes
-		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
+		const guantes = new Guante(DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		//guantes.position.set(0, THREE.MathUtils.degToRad(90), 0);
 		guantes.rotateY(THREE.MathUtils.degToRad(-90));
@@ -31,21 +30,6 @@ class Caballo extends THREE.Object3D {
 		guantes.guante2.position.set(3, 2.2, -1) 
 		
 		this.add(guantes);
-	}
-
-	createGUI(gui, titleGui) {
-		this.guiControls = {
-			reset: () => {
-				this.guiControls.animate = false;
-
-				this.update();
-			}
-		}
-		var folder = gui.addFolder(titleGui);
-		folder.add(this.guiControls, 'reset').name('[ Reset ]');
-	}
-
-	update() {
 	}
 }
 

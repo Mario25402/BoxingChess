@@ -8,7 +8,6 @@ import { Guante } from './Guante.js';
 class Reina extends THREE.Object3D {
 	constructor(gui, titleGui, DETAIL_LEVEL) {
 		super();
-		this.createGUI(gui, titleGui);
 
 		const material = new THREE.MeshNormalMaterial();
 		const evaluador = new CSG.Evaluator();
@@ -44,7 +43,6 @@ class Reina extends THREE.Object3D {
 		geom = new THREE.LatheGeometry(shape.getPoints(), DETAIL_LEVEL);
 		geom.translate(0, alturaCuerpo, 0)
 		const cuello = new CSG.Brush(geom, material);
-		
 
 		// Borde Cuello
 		shape = new THREE.Shape();
@@ -88,7 +86,6 @@ class Reina extends THREE.Object3D {
 		const esferaPequeña = new CSG.Brush(geom, material);
 
 		// Unión
-
 		let rey = evaluador.evaluate(cuello, bordeCuello, CSG.ADDITION);
 		rey = evaluador.evaluate(rey, esferaGrande, CSG.ADDITION);
 		rey = evaluador.evaluate(rey, esferaPequeña, CSG.ADDITION);
@@ -97,25 +94,11 @@ class Reina extends THREE.Object3D {
 		this.add(rey)
 
 		// Guantes
-		const guantes = new Guante(gui, 'Guantes', DETAIL_LEVEL);
+		const guantes = new Guante(DETAIL_LEVEL);
 		guantes.guante.position.set(-3.5, 3, 0)
 		guantes.guante2.position.set(3.5, 3, 0) 
 		
 		this.add(guantes);
-	}
-
-	createGUI(gui, titleGui) {
-		this.guiControls = {
-			reset: () => {
-				this.update();
-			}
-		}
-
-		var folder = gui.addFolder(titleGui);
-		folder.add(this.guiControls, 'reset').name('[ Reset ]');
-	}
-
-	update() {
 	}
 }
 
