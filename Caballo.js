@@ -11,7 +11,7 @@ class Caballo extends THREE.Object3D {
 		else material = new THREE.MeshStandardMaterial({color: 0x000000});
 
 		var objLoader = new OBJLoader();
-		objLoader.load('./obj/caballo.obj', (object) => {
+		objLoader.load('./obj/caballo1.obj', (object) => {
 			object.traverse((child) => {
 				if (child.isMesh) {
 					child.material = material; // Asignar el material
@@ -23,7 +23,7 @@ class Caballo extends THREE.Object3D {
 		}, null, null);
 
 		// Guantes
-		const guantes = new Guante(DETAIL_LEVEL, isBlanca);
+		const guantes = new Guante(null, "", isBlanca, DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.rotateY(THREE.MathUtils.degToRad(-90));
 		guantes.guante.position.set(-3, 2.2, -1)

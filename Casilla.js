@@ -15,7 +15,7 @@ class Casilla extends THREE.Object3D{
     }
 
     setPieza(pieza, isBlanca, DETAIL_LEVEL){
-        this.pieza = new Pieza(pieza, [this.posI, this.J], isBlanca, DETAIL_LEVEL);
+        this.pieza = new Pieza(pieza, [this.posI, this.posJ], isBlanca, DETAIL_LEVEL);
         this.pieza.position.set(this.posI, 0, this.posJ);
         this.add(this.pieza);
     }

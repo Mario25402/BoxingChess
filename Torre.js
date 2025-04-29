@@ -69,7 +69,7 @@ class Torre extends THREE.Object3D {
 		this.add(this.result);
 
 		// Guantes
-		const guantes = new Guante(DETAIL_LEVEL, isBlanca);
+		const guantes = new Guante(null, "", isBlanca, DETAIL_LEVEL);
 		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(-3.5, 2.2, 0)

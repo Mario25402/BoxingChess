@@ -38,7 +38,7 @@ class Peon extends THREE.Object3D {
 		this.add(this.peon);
 
 		// Guantes
-		const guantes = new Guante(DETAIL_LEVEL, isBlanca);
+		const guantes = new Guante(null, "", isBlanca, DETAIL_LEVEL);
 		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(-3.2, 1.62, 0)
