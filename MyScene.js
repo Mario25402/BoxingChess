@@ -15,6 +15,8 @@ import { Peon } from './Peon.js'
 import { Caballo } from './Caballo.js'
 import { Reina } from './Reina.js'
 
+import { Tablero } from './Tablero.js'
+
 
 /// La clase fachada del modelo
 /**
@@ -25,9 +27,8 @@ class MyScene extends THREE.Scene {
 	constructor(myCanvas) {
 		super();
 
-
+		// Se define el nivel de detalle de las piezas.
 		this.DETAIL_LEVEL = 5;
-
 
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
 		this.renderer = this.createRenderer(myCanvas);
@@ -46,46 +47,15 @@ class MyScene extends THREE.Scene {
 		// Tendremos una cámara con un control de movimiento con el ratón
 		this.createCamera();
 
-		// Creamos el tablero
-		this.createBoard();
-
 		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
 		// Todas las unidades están en metros
 		this.axis = new THREE.AxesHelper(2);
 		this.add(this.axis);
-
-
-		// Por último creamos el modelo.
-		// El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
-		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-		this.model = new Rey(this.gui, "Controles del Rey", this.DETAIL_LEVEL);
-		this.model.position.set(2, 0, 0);
-		this.model.scale.set(0.4, 0.4, 0.4);
-		this.add(this.model);
-
-		this.model = new Alfil(this.gui, "Controles del Alfil", this.DETAIL_LEVEL);
-		this.model.scale.set(0.4, 0.4, 0.4);
-		this.model.position.set(-2, 0, 0);
-		this.add(this.model);
-
-		this.model = new Torre(this.gui, "Controles de la Torre", this.DETAIL_LEVEL);
-		this.model.scale.set(1.1, 1.1, 1.1);
-		this.model.position.set(-6.5, 0, 0);
-		this.add(this.model);
-
-		this.model = new Peon(this.gui, "Controles del Peón", this.DETAIL_LEVEL);
-		this.model.position.set(4, 0, 0);
-		this.add(this.model);
-
-		this.model = new Caballo(this.gui, "Controles del Caballo", this.DETAIL_LEVEL);
-		this.model.rotateY(THREE.MathUtils.degToRad(90))
-		this.model.position.set(10, 0, 0)
-		this.add(this.model)
-
-		this.model = new Reina(this.gui, "Controles de la Reina", this.DETAIL_LEVEL);
-		this.model.position.set(-11, 0, 0);
-		this.model.scale.set(0.4, 0.4, 0.4);
-		this.add(this.model);
+		
+		// Y un tablero
+		let tablero = new Tablero(8, 8);
+		tablero.position.set(-3.5, 0, -3.5);
+		this.add(tablero);
 	}
 
 	initStats() {
@@ -126,28 +96,6 @@ class MyScene extends THREE.Scene {
 		this.cameraControl.panSpeed = 0.5;
 		// Debe orbitar con respecto al punto de mira de la cámara
 		this.cameraControl.target = look;
-	}
-
-	createBoard() {
-		// El suelo es un Mesh, necesita una geometría y un material.
-		
-		// La geometría es una caja con muy poca altura
-		var geometryGround = new THREE.BoxGeometry (30, 0.5, 30);
-		geometryGround.translate(0, -0.25, 0);
-		
-		// El material se hará con una textura de madera
-		var texture = new THREE.TextureLoader().load('./imgs/board.png');
-		var materialGround = new THREE.MeshStandardMaterial ({map: texture});
-		
-		// Ya se puede construir el Mesh
-		var ground = new THREE.Mesh (geometryGround, materialGround);
-		
-		// Todas las figuras se crean centradas en el origen.
-		// El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
-		ground.position.y = -0.01;
-		
-		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
-		this.add (ground);
 	}
 
 	createGUI() {
