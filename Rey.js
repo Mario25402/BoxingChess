@@ -88,6 +88,7 @@ class Rey extends THREE.Object3D {
 
 		let rey = evaluador.evaluate(cuerpo, cuello, CSG.ADDITION);
 		rey = evaluador.evaluate(rey, cruz, CSG.ADDITION);
+		rey.rotateY(MathUtils.degToRad(90));
 
 		this.add(rey)
 
