@@ -3,7 +3,7 @@ import { OBJLoader } from '../libs/OBJLoader.js'
 import { Guante } from './Guante.js';
 
 class Caballo extends THREE.Object3D {
-	constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
+	constructor(isBlanca, DETAIL_LEVEL) {
 		super();
 
 		let material;
@@ -23,7 +23,7 @@ class Caballo extends THREE.Object3D {
 		}, null, null);
 
 		// Guantes
-		const guantes = new Guante(null, "", isBlanca, DETAIL_LEVEL);
+		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.rotateY(THREE.MathUtils.degToRad(-90));
 		guantes.guante.position.set(-3, 2.2, -1)

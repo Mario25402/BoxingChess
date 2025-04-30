@@ -4,7 +4,7 @@ import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
 
 class Peon extends THREE.Object3D {
-	constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
+	constructor(isBlanca, DETAIL_LEVEL) {
 		super();
 
 		let material;
@@ -38,7 +38,7 @@ class Peon extends THREE.Object3D {
 		this.add(this.peon);
 
 		// Guantes
-		const guantes = new Guante(null, "", isBlanca, DETAIL_LEVEL);
+		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
 		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(-3.2, 1.62, 0)

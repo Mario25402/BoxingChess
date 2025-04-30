@@ -3,7 +3,7 @@ import { Casilla } from './Casilla.js'
 import * as CSG from '../libs/three-bvh-csg.js'
 
 class Tablero extends THREE.Object3D{
-    DETAIL_LEVEL = 15;
+    DETAIL_LEVEL = 3;
 
     constructor(i, j){
         super();

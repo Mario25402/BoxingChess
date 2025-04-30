@@ -15,33 +15,33 @@ class Pieza extends THREE.Object3D{
 
         switch (pieza) {
             case "Rey":
-                this.pieza = new Rey(null, "", isBlanca, DETAIL_LEVEL);
+                this.pieza = new Rey(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
 
             case "Reina":
-                this.pieza = new Reina(null, "", isBlanca, DETAIL_LEVEL);
+                this.pieza = new Reina(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
             
             case "Caballo":
-                this.pieza = new Caballo(null, "", isBlanca, DETAIL_LEVEL);
+                this.pieza = new Caballo(isBlanca, DETAIL_LEVEL);
                 this.pieza.rotateY(THREE.MathUtils.degToRad(180));
                 this.pieza.scale.set(0.3, 0.3, 0.3)
                 break;
 
             case "Torre":
-                this.pieza = new Torre(null, "", isBlanca, DETAIL_LEVEL);
+                this.pieza = new Torre(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.3, 0.3, 0.3)
                 break;
 
             case "Alfil":
-                this.pieza = new Alfil(null, "", isBlanca, DETAIL_LEVEL);
+                this.pieza = new Alfil(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
             
             case "Peon":
-                this.pieza = new Peon(null, "", isBlanca, DETAIL_LEVEL);
+                this.pieza = new Peon(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.3, 0.3, 0.3)
                 break;
         }

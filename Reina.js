@@ -6,7 +6,7 @@ import { Guante } from './Guante.js';
 
 
 class Reina extends THREE.Object3D {
-	constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
+	constructor(isBlanca, DETAIL_LEVEL) {
 		super();
 
 		let material;
@@ -97,7 +97,7 @@ class Reina extends THREE.Object3D {
 		this.add(rey)
 
 		// Guantes
-		const guantes = new Guante(null, "", isBlanca, DETAIL_LEVEL);
+		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
 		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.guante.position.set(-3.5, 3, 0)
 		guantes.guante2.position.set(3.5, 3, 0) 

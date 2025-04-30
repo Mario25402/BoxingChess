@@ -3,7 +3,7 @@ import * as CSG from '../libs/three-bvh-csg.js'
 
 
 class Guante extends THREE.Object3D {
-    constructor(gui, titleGui, isBlanca, DETAIL_LEVEL) {
+    constructor(isBlanca, DETAIL_LEVEL) {
         super();
 
         let material, material2;
