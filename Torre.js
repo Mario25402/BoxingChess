@@ -66,7 +66,10 @@ class Torre extends THREE.Object3D {
 		this.agujero4 = evaluador.evaluate(this.agujero3, this.boxBrush3, CSG.SUBTRACTION);
 		this.result = evaluador.evaluate(this.agujero4, this.boxBrush4, CSG.SUBTRACTION);
 
-		this.add(this.result);
+		//this.add(this.result);
+		const geomTorre = this.result.geometry;
+		const meshTorre = new THREE.Mesh(geomTorre, material);
+		this.add(meshTorre);
 
 		// Guantes
 		const guantes = new Guante(isBlanca, DETAIL_LEVEL);

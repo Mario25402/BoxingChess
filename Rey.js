@@ -90,14 +90,17 @@ class Rey extends THREE.Object3D {
 		rey = evaluador.evaluate(rey, cruz, CSG.ADDITION);
 		rey.rotateY(MathUtils.degToRad(90));
 
-		this.add(rey)
+		// Convertir el resultado de CSG a THREE.Mesh para poder cambiar el color
+		const geomRey = rey.geometry; 
+		const meshRey = new THREE.Mesh(geomRey, material);
+		this.add(meshRey);
 
 		// Guantes
 		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
 		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
-		guantes.guante.position.set(-3.5, 3, 0)
-		guantes.guante2.position.set(3.5, 3, 0) 
-		
+		guantes.guante.position.set(-3.5, 3, 0);
+		guantes.guante2.position.set(3.5, 3, 0);
+
 		this.add(guantes);
 	}
 }

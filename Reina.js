@@ -94,7 +94,9 @@ class Reina extends THREE.Object3D {
 		rey = evaluador.evaluate(rey, esferaPequeña, CSG.ADDITION);
 		rey = evaluador.evaluate(rey, cuerpo, CSG.ADDITION);
 
-		this.add(rey)
+		const geomRey = rey.geometry; 
+		const meshRey = new THREE.Mesh(geomRey, material);
+		this.add(meshRey);
 
 		// Guantes
 		const guantes = new Guante(isBlanca, DETAIL_LEVEL);

@@ -86,7 +86,10 @@ class Alfil extends THREE.Object3D {
 		alfil = evaluador.evaluate(alfil, collar2, CSG.ADDITION);
 		alfil = evaluador.evaluate(alfil, collar3, CSG.ADDITION);
 
-		this.add(alfil);
+		//this.add(alfil);
+		const geomAlfil = alfil.geometry
+		const meshAlfil = new THREE.Mesh(geomAlfil, material);
+		this.add(meshAlfil);
 
 		// Guantes
 		const guantes = new Guante(isBlanca, DETAIL_LEVEL);

@@ -16,6 +16,7 @@ import { Caballo } from './Caballo.js'
 import { Reina } from './Reina.js'
 
 import { Tablero } from './Tablero.js'
+import { Pieza } from './Pieza.js'
 
 
 /// La clase fachada del modelo
@@ -34,6 +35,14 @@ class MyScene extends THREE.Scene {
 		this.gui = this.createGUI();
 
 		this.initStats();
+
+		//Raycaster y vector del ratón
+		this.raycaster = new THREE.Raycaster();
+		this.mouse = new THREE.Vector2();
+		this.selectedPiece = null;
+
+		// Se añade un listener para detectar el clic del ratón
+		window.addEventListener('click', (event) => this.onMouseClick(event));
 
 		// Construimos los distinos elementos que tendremos en la escena
 
@@ -70,6 +79,59 @@ class MyScene extends THREE.Scene {
 
 		this.stats = stats;
 	}
+
+	onMouseClick(event) {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+
+        // Recopilar todos los objetos detectables (incluyendo los hijos del Tablero)
+        const objetosDetectables = [];
+        this.traverse((child) => {
+            if (child.isMesh) {
+                objetosDetectables.push(child);
+            }
+        });
+
+        const intersects = this.raycaster.intersectObjects(objetosDetectables, true);
+
+        if (intersects.length > 0) {
+            const pickedObject = intersects[0].object;
+
+            // Verificar si el objeto pertenece a una pieza
+            let currentObject = pickedObject;
+            while (currentObject && !(currentObject instanceof Pieza)) {
+                currentObject = currentObject.parent;
+            }
+
+            if (currentObject instanceof Pieza) {
+                // Restaurar el color de la pieza previamente seleccionada
+                if (this.selectedPiece) {
+                    this.selectedPiece.traverse((child) => {
+                        if (child.isMesh && child.material && child.material.color) {
+                            child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
+                        }
+                    });
+                }
+
+                // Guardar la pieza seleccionada y su color original
+                this.selectedPiece = currentObject;
+                this.selectedPiece.originalColor = null;
+
+                // Cambiar el color de la nueva pieza seleccionada
+                this.selectedPiece.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.color) {
+                        // Guardar el color original si no está guardado
+                        if (!this.selectedPiece.originalColor) {
+                            this.selectedPiece.originalColor = child.material.color.getHex();
+                        }
+                        child.material.color.set(0xff0000);
+                    }
+                });
+            }
+        }
+    }
 
 	createCamera() {
 		// Para crear una cámara le indicamos

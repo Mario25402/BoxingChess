@@ -35,7 +35,11 @@ class Peon extends THREE.Object3D {
 
 		// Unión
 		this.peon = evaluador.evaluate(this.shapeBrush, this.esferaBrush, CSG.ADDITION);
-		this.add(this.peon);
+		//this.add(this.peon);
+
+		const geomPeon = this.peon.geometry
+		const meshPeon = new THREE.Mesh(geomPeon, material);
+		this.add(meshPeon);
 
 		// Guantes
 		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
