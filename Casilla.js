@@ -30,6 +30,11 @@ class Casilla extends THREE.Object3D{
     setColorOriginal() {
         this.mesh.material.color.set(this.colorOriginal);
     }
+
+    setColorComer() {
+        //amrillo
+        this.mesh.material.color.set(0xFFCC00);
+    }
 }
 
 export { Casilla }

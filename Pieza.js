@@ -52,51 +52,20 @@ class Pieza extends THREE.Object3D{
         this.add(this.pieza);
     }
 
-    getPosiblesMovimientos(casillasLibres){
-        let movimientos = this.pieza.getMovimientos(this.casillaActual);
+    getPosiblesMovimientos(casillasLibres, casillasOcupadas) {
+        let movimientos = this.pieza.getMovimientos(this.casillaActual, casillasOcupadas);
         let posiblesMovimientos = [];
-
-        // Filtrar los movimientos posibles
-        for (let i = 0; i < movimientos.length; i++){
-            for (let j = 0; j < casillasLibres.length; j++){
-                if (movimientos[i][0] == casillasLibres[j][0] && movimientos[i][1] == casillasLibres[j][1]){
+    
+        // Filtrar los movimientos posibles (solo casillas libres o con piezas enemigas)
+        for (let i = 0; i < movimientos.length; i++) {
+            for (let j = 0; j < casillasLibres.length; j++) {
+                if (movimientos[i][0] == casillasLibres[j][0] && movimientos[i][1] == casillasLibres[j][1]) {
                     posiblesMovimientos.push(movimientos[i]);
                 }
             }
         }
-
-        /* // Eliminar movimientos que sean bloqueados por piezas aliadas
-        for (let i = 0; i < posiblesMovimientos.length; i++){
-            for (let j = 0; j < casillasLibres.length; j++){
-                if (posiblesMovimientos[i][0] == casillasLibres[j][0] && posiblesMovimientos[i][1] == casillasLibres[j][1]){
-                    posiblesMovimientos.splice(i, 1);
-                    i--;
-                    break;
-                }
-            }
-        } */
-
+    
         return posiblesMovimientos;
-
-        /* switch (this.pieza) {
-            case "Rey":
-                break;
-
-            case "Reina":
-                break;
-            
-            case "Caballo":
-                break;
-
-            case "Torre":
-                break;
-
-            case "Alfil":
-                break;
-            
-            case "Peon":
-                break;
-        } */
     }
 }
 

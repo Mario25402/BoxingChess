@@ -7,6 +7,7 @@ class Peon extends THREE.Object3D {
 	constructor(isBlanca, DETAIL_LEVEL) {
 		super();
 
+		this.isBlanca = isBlanca;
 		let material;
 		const evaluador = new CSG.Evaluator();
 
@@ -50,6 +51,41 @@ class Peon extends THREE.Object3D {
 		
 		this.add(guantes);
 	}
+
+	getMovimientos(casillaActual, casillasOcupadas) {
+		const [x, y] = casillaActual; // x = fila (avance), y = columna (horizontal)
+		const movimientos = [];
+		const direccion = this.isBlanca ? 1 : -1; // Blancas suben (x+1), negras bajan (x-1)
+	
+		const dentroDelTablero = (x, y) => x >= 0 && x < 8 && y >= 0 && y < 8;
+		const estaOcupada = (x, y) => casillasOcupadas.some(([ox, oy]) => ox === x && oy === y);
+	
+		// Movimiento hacia adelante (una casilla)
+		const x1 = x + direccion;
+		if (dentroDelTablero(x1, y) && !estaOcupada(x1, y)) {
+			movimientos.push([x1, y]);
+	
+			// Movimiento doble desde la fila inicial
+			const x2 = x + 2 * direccion;
+			const esPrimerMovimiento = (this.isBlanca && x === 1) || (!this.isBlanca && x === 6);
+			if (esPrimerMovimiento && dentroDelTablero(x2, y) && !estaOcupada(x2, y)) {
+				movimientos.push([x2, y]);
+			}
+		}
+	
+		// Capturas en diagonal
+		for (let dy of [-1, 1]) {
+			const cx = x + direccion;
+			const cy = y + dy;
+			if (dentroDelTablero(cx, cy) && estaOcupada(cx, cy)) {
+				movimientos.push([cx, cy]);
+			}
+		}
+	
+		return movimientos;
+	}
+	
+
 }
 
 export { Peon };

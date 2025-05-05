@@ -99,6 +99,41 @@ class Alfil extends THREE.Object3D {
 		
 		this.add(guantes);
 	}
+
+	getMovimientos(casillaActual, casillasOcupadas) {
+		const [x, y] = casillaActual;
+		const movimientos = [];
+	
+		// Direcciones diagonales: [dx, dy]
+		const direcciones = [
+			[1, 1],   // Diagonal abajo-derecha
+			[-1, -1], // Diagonal arriba-izquierda
+			[1, -1],  // Diagonal abajo-izquierda
+			[-1, 1]   // Diagonal arriba-derecha
+		];
+	
+		for (const [dx, dy] of direcciones) {
+			let i = x + dx;
+			let j = y + dy;
+	
+			// Continuar en la dirección mientras esté dentro del tablero
+			while (i >= 0 && i < 8 && j >= 0 && j < 8) {
+				const casilla = [i, j];
+	
+				// Si la casilla está ocupada, detener el movimiento
+				if (casillasOcupadas.some(([ox, oy]) => ox === i && oy === j)) {
+					movimientos.push(casilla); // Puede capturar la pieza enemiga
+					break;
+				}
+	
+				movimientos.push(casilla); // Casilla libre
+				i += dx;
+				j += dy;
+			}
+		}
+	
+		return movimientos;
+	}
 }
 
 export { Alfil };

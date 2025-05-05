@@ -103,6 +103,37 @@ class Rey extends THREE.Object3D {
 
 		this.add(guantes);
 	}
+
+	getMovimientos(casillaActual, casillasOcupadas) {
+		const [x, y] = casillaActual;
+		const movimientos = [];
+	
+		// Posibles movimientos del Rey (una casilla en cualquier dirección)
+		const posiblesMovimientos = [
+			[x + 1, y],     // Derecha
+			[x - 1, y],     // Izquierda
+			[x, y + 1],     // Arriba
+			[x, y - 1],     // Abajo
+			[x + 1, y + 1], // Diagonal arriba-derecha
+			[x - 1, y + 1], // Diagonal arriba-izquierda
+			[x + 1, y - 1], // Diagonal abajo-derecha
+			[x - 1, y - 1]  // Diagonal abajo-izquierda
+		];
+	
+		for (const [nx, ny] of posiblesMovimientos) {
+			// Verificar que el movimiento esté dentro del tablero
+			if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+				// Verificar si la casilla está ocupada
+				if (!casillasOcupadas.some(([ox, oy]) => ox === nx && oy === ny)) {
+					movimientos.push([nx, ny]); // Casilla libre
+				} else {
+					movimientos.push([nx, ny]); // Puede capturar la pieza enemiga
+				}
+			}
+		}
+	
+		return movimientos;
+	}
 }
 
 export { Rey };

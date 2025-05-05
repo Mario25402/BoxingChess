@@ -60,12 +60,12 @@ class Tablero extends THREE.Object3D{
         this.tablero[7][7].setPieza("Torre", false, this.DETAIL_LEVEL);
 
         // Peones Blancos y Negros
-        /* for (let i = 0; i < 8; i++){
+        for (let i = 0; i < 8; i++){
             if (i != 3){
                 this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
                 this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
             }
-        } */
+        }
     }
 
     crearRing() {
@@ -158,16 +158,37 @@ class Tablero extends THREE.Object3D{
         return casillasLibres;
     }
 
-    getPosiblesMovimientos(pieza){
-        let movimientos = pieza.getPosiblesMovimientos(this.getCasillasLibres(pieza.isBlanca));
-        console.log(movimientos);
+    getCasillasOcupadas() {
+        let casillasOcupadas = [];
+    
+        for (let i = 0; i < this.tablero.length; i++) {
+            for (let j = 0; j < this.tablero[i].length; j++) {
+                if (this.tablero[i][j].pieza != null) {
+                    casillasOcupadas.push([i, j]);
+                }
+            }
+        }
+    
+        return casillasOcupadas;
+    }
 
-        // cambiar color de las casillas de los movimientos
-        for (let i = 0; i < movimientos.length; i++){
+    getPosiblesMovimientos(pieza) {
+        let casillasLibres = this.getCasillasLibres(pieza.isBlanca);
+        let casillasOcupadas = this.getCasillasOcupadas();
+        let movimientos = pieza.getPosiblesMovimientos(casillasLibres, casillasOcupadas);
+        console.log(movimientos);
+    
+        // Cambiar color de las casillas de los movimientos
+        for (let i = 0; i < movimientos.length; i++) {
             let x = movimientos[i][0];
             let y = movimientos[i][1];
-
-            this.tablero[x][y].setColorNavegable();
+    
+            // Verificar si la casilla contiene una pieza enemiga
+            if (this.tablero[x][y].pieza != null && this.tablero[x][y].pieza.isBlanca !== pieza.isBlanca) {
+                this.tablero[x][y].setColorComer(); // Pintar en azul si es una pieza enemiga
+            } else {
+                this.tablero[x][y].setColorNavegable(); // Pintar en verde si es una casilla libre
+            }
         }
     }
 
