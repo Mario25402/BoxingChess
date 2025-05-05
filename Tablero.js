@@ -19,9 +19,7 @@ class Tablero extends THREE.Object3D{
     }
 
     relllenarTablero(i, j){
-        let matBlanco = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
         let matBlanco2 = new THREE.MeshStandardMaterial({color: 0xE6CFCF});
-        let matNegro = new THREE.MeshStandardMaterial({color: 0x000000});
         let matNegro2 = new THREE.MeshStandardMaterial({color: 0x4B4B4B});
 
         let geom = new THREE.BoxGeometry(1, 0.2, 1);
@@ -63,8 +61,10 @@ class Tablero extends THREE.Object3D{
 
         // Peones Blancos y Negros
         /* for (let i = 0; i < 8; i++){
-            this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
-            this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
+            if (i != 3){
+                this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
+                this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
+            }
         } */
     }
 
@@ -167,9 +167,19 @@ class Tablero extends THREE.Object3D{
             let x = movimientos[i][0];
             let y = movimientos[i][1];
 
-            //this.tablero[x][y].setColor(0x00FF00);
+            this.tablero[x][y].setColorNavegable();
         }
     }
+
+    repaint(){
+        this.tablero.forEach((fila) => {
+            fila.forEach((casilla) => {
+                casilla.setColorOriginal();
+            });
+        });
+    }
+
+    
 
 }
 

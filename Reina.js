@@ -140,6 +140,9 @@ class Reina extends THREE.Object3D {
 			return casilla[0] != casillaActual[0] || casilla[1] != casillaActual[1];
 		});
 
+		// Si la pieza esta bloqueada por casillas de su mismo color, eliminar las casillas que atraviasen esa pieza que bloquea
+		
+
 		return movimientos;
 	}
 }

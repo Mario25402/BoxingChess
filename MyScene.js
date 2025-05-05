@@ -96,45 +96,65 @@ class MyScene extends THREE.Scene {
 
         const intersects = this.raycaster.intersectObjects(objetosDetectables, true);
 
-        if (intersects.length > 0) {
-            const pickedObject = intersects[0].object;
+		if (intersects.length > 0) {
+			const pickedObject = intersects[0].object;
+		
+			// Verificar si el objeto pertenece a una pieza
+			let currentObject = pickedObject;
+			while (currentObject && !(currentObject instanceof Pieza)) {
+				currentObject = currentObject.parent;
+			}
+		
+			if (currentObject instanceof Pieza) {
+				// Restaurar el color de la pieza previamente seleccionada
+				if (this.selectedPiece) {
+					this.selectedPiece.traverse((child) => {
+						if (child.isMesh && child.material && child.material.color) {
+							child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
+						}
+					});
+				}
+		
+				// Guardar la pieza seleccionada y su color original
+				this.selectedPiece = currentObject;
+				this.selectedPiece.originalColor = null;
+		
+				// Cambiar el color de la nueva pieza seleccionada
+				this.selectedPiece.traverse((child) => {
+					if (child.isMesh && child.material && child.material.color) {
+						// Guardar el color original si no está guardado
+						if (!this.selectedPiece.originalColor) {
+							this.selectedPiece.originalColor = child.material.color.getHex();
+						}
+						child.material.color.set(0xff0000);
+					}
 
-            // Verificar si el objeto pertenece a una pieza
-            let currentObject = pickedObject;
-            while (currentObject && !(currentObject instanceof Pieza)) {
-                currentObject = currentObject.parent;
-            }
+					// Restaurar el color de las casillas
+					this.children[4].repaint();
+				});
+			}
+		} 
+		else {
+			// Si no hay intersecciones, se deselecciona cualquier pieza seleccionada
+			if (this.selectedPiece) {
+				this.selectedPiece.traverse((child) => {
+					if (child.isMesh && child.material && child.material.color) {
+						child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
+					}
+				});
+				this.selectedPiece = null; // Deseleccionar la pieza
 
-            if (currentObject instanceof Pieza) {
-                // Restaurar el color de la pieza previamente seleccionada
-                if (this.selectedPiece) {
-                    this.selectedPiece.traverse((child) => {
-                        if (child.isMesh && child.material && child.material.color) {
-                            child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
-                        }
-                    });
-                }
-
-                // Guardar la pieza seleccionada y su color original
-                this.selectedPiece = currentObject;
-                this.selectedPiece.originalColor = null;
-
-                // Cambiar el color de la nueva pieza seleccionada
-                this.selectedPiece.traverse((child) => {
-                    if (child.isMesh && child.material && child.material.color) {
-                        // Guardar el color original si no está guardado
-                        if (!this.selectedPiece.originalColor) {
-                            this.selectedPiece.originalColor = child.material.color.getHex();
-                        }
-                        child.material.color.set(0xff0000);
-                    }
-                });
-            }
-        }
+				// Restaurar el color de las casillas
+				this.children[4].repaint();
+			}
+		}	
 
 		// Mostrar posibles movimientos de la pieza seleccionada
-		if (this.selectedPiece)
+		if (this.selectedPiece){
+			
 			this.children[4].getPosiblesMovimientos(this.selectedPiece);
+		}
+			
 		
     }
 

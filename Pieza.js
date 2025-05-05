@@ -65,6 +65,17 @@ class Pieza extends THREE.Object3D{
             }
         }
 
+        /* // Eliminar movimientos que sean bloqueados por piezas aliadas
+        for (let i = 0; i < posiblesMovimientos.length; i++){
+            for (let j = 0; j < casillasLibres.length; j++){
+                if (posiblesMovimientos[i][0] == casillasLibres[j][0] && posiblesMovimientos[i][1] == casillasLibres[j][1]){
+                    posiblesMovimientos.splice(i, 1);
+                    i--;
+                    break;
+                }
+            }
+        } */
+
         return posiblesMovimientos;
 
         /* switch (this.pieza) {
