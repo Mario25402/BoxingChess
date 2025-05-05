@@ -89,14 +89,14 @@ class Reina extends THREE.Object3D {
 		const esferaPequeña = new CSG.Brush(geom, material);
 
 		// Unión
-		let rey = evaluador.evaluate(cuello, bordeCuello, CSG.ADDITION);
-		rey = evaluador.evaluate(rey, esferaGrande, CSG.ADDITION);
-		rey = evaluador.evaluate(rey, esferaPequeña, CSG.ADDITION);
-		rey = evaluador.evaluate(rey, cuerpo, CSG.ADDITION);
+		let reina = evaluador.evaluate(cuello, bordeCuello, CSG.ADDITION);
+		reina = evaluador.evaluate(reina, esferaGrande, CSG.ADDITION);
+		reina = evaluador.evaluate(reina, esferaPequeña, CSG.ADDITION);
+		reina = evaluador.evaluate(reina, cuerpo, CSG.ADDITION);
 
-		const geomRey = rey.geometry; 
-		const meshRey = new THREE.Mesh(geomRey, material);
-		this.add(meshRey);
+		const geomReina = reina.geometry; 
+		const meshReina = new THREE.Mesh(geomReina, material);
+		this.add(meshReina);
 
 		// Guantes
 		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
