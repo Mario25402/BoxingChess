@@ -131,6 +131,11 @@ class MyScene extends THREE.Scene {
                 });
             }
         }
+
+		// Mostrar posibles movimientos de la pieza seleccionada
+		if (this.selectedPiece)
+			this.children[4].getPosiblesMovimientos(this.selectedPiece);
+		
     }
 
 	createCamera() {

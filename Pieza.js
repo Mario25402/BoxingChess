@@ -12,6 +12,7 @@ class Pieza extends THREE.Object3D{
         super();
 
         this.casillaActual = casillaActual
+        this.isBlanca = isBlanca
 
         switch (pieza) {
             case "Rey":
@@ -49,6 +50,42 @@ class Pieza extends THREE.Object3D{
         if (!isBlanca) this.pieza.rotateY(THREE.MathUtils.degToRad(180));
 
         this.add(this.pieza);
+    }
+
+    getPosiblesMovimientos(casillasLibres){
+        let movimientos = this.pieza.getMovimientos(this.casillaActual);
+        let posiblesMovimientos = [];
+
+        // Filtrar los movimientos posibles
+        for (let i = 0; i < movimientos.length; i++){
+            for (let j = 0; j < casillasLibres.length; j++){
+                if (movimientos[i][0] == casillasLibres[j][0] && movimientos[i][1] == casillasLibres[j][1]){
+                    posiblesMovimientos.push(movimientos[i]);
+                }
+            }
+        }
+
+        return posiblesMovimientos;
+
+        /* switch (this.pieza) {
+            case "Rey":
+                break;
+
+            case "Reina":
+                break;
+            
+            case "Caballo":
+                break;
+
+            case "Torre":
+                break;
+
+            case "Alfil":
+                break;
+            
+            case "Peon":
+                break;
+        } */
     }
 }
 

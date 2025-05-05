@@ -106,6 +106,42 @@ class Reina extends THREE.Object3D {
 		
 		this.add(guantes);
 	}
+
+	getMovimientos(casillaActual){
+		// Incluir todas las casillas a las que puede moverse la reina sabiendo la casilla actual
+		let movimientos = [];
+
+		// Misma fila
+		for (let i = 0; i < 8; i++){
+			movimientos.push([casillaActual[0], i]);
+		}
+
+		// Misma columna
+		for (let i = 0; i < 8; i++){
+			movimientos.push([i, casillaActual[1]]);
+		}
+
+		// Diagonal
+		for (let i = 0; i < 8; i++){
+			movimientos.push([casillaActual[0] + i, casillaActual[1] + i]);
+			movimientos.push([casillaActual[0] - i, casillaActual[1] - i]);
+
+			movimientos.push([casillaActual[0] + i, casillaActual[1] - i]);
+			movimientos.push([casillaActual[0] - i, casillaActual[1] + i]);
+		}
+
+		// Eliminar casillas fuera del tablero
+		movimientos = movimientos.filter((casilla) => {
+			return casilla[0] >= 0 && casilla[0] < 8 && casilla[1] >= 0 && casilla[1] < 8;
+		});
+
+		// Eliminar casilla actual
+		movimientos = movimientos.filter((casilla) => {
+			return casilla[0] != casillaActual[0] || casilla[1] != casillaActual[1];
+		});
+
+		return movimientos;
+	}
 }
 
 export { Reina };
