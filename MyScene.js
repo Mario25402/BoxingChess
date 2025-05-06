@@ -2,20 +2,15 @@
 // Clases de la biblioteca
 
 import * as THREE from '../libs/three.module.js'
+import * as TWEEN from '../libs/tween.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import Stats from '../libs/stats.module.js'
 
 // Clases de mi proyecto
 
-import { Rey } from './Rey.js'
-import { Alfil } from './Alfil.js'
-import { Torre } from './Torre.js'
-import { Peon } from './Peon.js'
-import { Caballo } from './Caballo.js'
-import { Reina } from './Reina.js'
-
 import { Tablero } from './Tablero.js'
+import { Casilla } from './Casilla.js'
 import { Pieza } from './Pieza.js'
 
 
@@ -43,6 +38,7 @@ class MyScene extends THREE.Scene {
 
 		// Se añade un listener para detectar el clic del ratón
 		window.addEventListener('click', (event) => this.onMouseClick(event));
+		window.addEventListener('contextmenu', (event) => this.onRightClick(event));
 
 		// Construimos los distinos elementos que tendremos en la escena
 
@@ -150,13 +146,55 @@ class MyScene extends THREE.Scene {
 		}	
 
 		// Mostrar posibles movimientos de la pieza seleccionada
-		if (this.selectedPiece){
-			
+		if (this.selectedPiece){	
 			this.children[4].getPosiblesMovimientos(this.selectedPiece);
 		}
-			
-		
     }
+
+	onRightClick(event) {
+		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+	
+		this.raycaster.setFromCamera(this.mouse, this.camera);
+	
+		// Recopilar todas las casillas del tablero
+		const casillas = [];
+		this.traverse((child) => {
+			if (child instanceof Casilla) {
+				casillas.push(child);
+			}
+		});
+	
+		// Detectar intersecciones con las casillas
+		const intersects = this.raycaster.intersectObjects(casillas, true);
+	
+		if (intersects.length > 0) {
+			const pickedObject = intersects[0].object;
+	
+			// Verificar si el objeto pertenece a una casilla
+			let currentCasilla = pickedObject;
+			while (currentCasilla && !(currentCasilla instanceof Casilla)) {
+				currentCasilla = currentCasilla.parent;
+			}
+	
+			if (currentCasilla instanceof Casilla) {
+				// Restaurar colores originales del tablero
+				this.children[4].repaint();
+	
+				// Pintar la casilla de morado solo si es una casilla transitable y  no está ocupada por una pieza
+				if (this.selectedPiece) {
+					const casillasLibres = this.children[4].getCasillasLibres(this.selectedPiece.pieza.isBlanca);
+	
+					for (let i = 0; i < casillasLibres.length; i++) {
+						if (casillasLibres[i][0] == currentCasilla.posI && casillasLibres[i][1] == currentCasilla.posJ) {
+							currentCasilla.setColorMov();
+							this.selectedPiece.moveTo([currentCasilla.posI, currentCasilla.posJ]);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	createCamera() {
 		// Para crear una cámara le indicamos
@@ -299,7 +337,7 @@ class MyScene extends THREE.Scene {
 		this.cameraControl.update();
 
 		// Se actualiza el resto del modelo
-		//this.model.update();
+		TWEEN.update();
 
 		// Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
 		this.renderer.render(this, this.getCamera());

@@ -1,4 +1,7 @@
 import * as THREE from '../libs/three.module.js'
+import * as TWEEN from '../libs/tween.module.js'
+import { StraightAnimator } from './Animator.js'
+
 
 import { Rey } from './Rey.js'
 import { Alfil } from './Alfil.js'
@@ -11,6 +14,7 @@ class Pieza extends THREE.Object3D{
     constructor(pieza, casillaActual, isBlanca, DETAIL_LEVEL){
         super();
 
+        this.animacion = new StraightAnimator();
         this.casillaActual = casillaActual
         this.isBlanca = isBlanca
 
@@ -67,6 +71,14 @@ class Pieza extends THREE.Object3D{
     
         return posiblesMovimientos;
     }
+
+    moveTo(casilla){
+        casilla = new THREE.Vector3(casilla[0], 0, casilla[1]);
+        let actual = new THREE.Vector3(this.casillaActual[0], 0, this.casillaActual[1]);
+
+		this.animacion.setAndStart(actual, casilla, 100);
+        this.casillaActual = [casilla.x, casilla.z];
+	}
 }
 
 export { Pieza }
