@@ -188,7 +188,7 @@ class MyScene extends THREE.Scene {
 					for (let i = 0; i < casillasLibres.length; i++) {
 						if (casillasLibres[i][0] == currentCasilla.posI && casillasLibres[i][1] == currentCasilla.posJ) {
 							currentCasilla.setColorMov();
-							this.selectedPiece.moveTo([currentCasilla.posI, currentCasilla.posJ]);
+							this.selectedPiece.moveTo(currentCasilla);
 						}
 					}
 				}

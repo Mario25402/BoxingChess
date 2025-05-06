@@ -16,6 +16,27 @@ class Casilla extends THREE.Object3D{
         this.add(this.mesh)
     }
 
+    quitarPieza(){
+        if (this.pieza != null){
+            this.remove(this.pieza);
+            this.pieza = null;
+
+            console.log("Pieza quitada de casilla", this.posI, this.posJ);
+        }
+    }
+
+    ponerPieza(pieza){
+        if (this.pieza != null){
+            this.remove(this.pieza);
+        }
+
+        console.log("Poniendo pieza en casilla", this.posI, this.posJ);
+
+        this.pieza = pieza;
+        this.pieza.position.set(this.posI, 0, this.posJ);
+        this.add(this.pieza);
+    }
+
     setPieza(pieza, isBlanca, DETAIL_LEVEL){
         this.pieza = new Pieza(pieza, [this.posI, this.posJ], isBlanca, DETAIL_LEVEL);
         this.pieza.position.set(this.posI, 0, this.posJ);
