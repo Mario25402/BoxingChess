@@ -147,11 +147,13 @@ class MyScene extends THREE.Scene {
 
 		// Mostrar posibles movimientos de la pieza seleccionada
 		if (this.selectedPiece){	
-			this.children[4].getPosiblesMovimientos(this.selectedPiece);
+			this.movimientosVerdes = this.children[4].getPosiblesMovimientos(this.selectedPiece);
 		}
     }
 
 	onRightClick(event) {
+		event.preventDefault(); // Evitar el menú contextual del navegador
+	
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 	
@@ -178,19 +180,32 @@ class MyScene extends THREE.Scene {
 			}
 	
 			if (currentCasilla instanceof Casilla) {
-				// Restaurar colores originales del tablero
-				this.children[4].repaint();
+				// Verificar si la casilla está en los movimientos verdes
+				const esCasillaValida = this.movimientosVerdes.some(
+					(casilla) => casilla[0] === currentCasilla.posI && casilla[1] === currentCasilla.posJ
+				);
+
+				console.log("Casilla seleccionada:", currentCasilla.posI, currentCasilla.posJ);
+				console.log("Movimientos válidos:", this.movimientosVerdes);
+				console.log("Es casilla válida:", esCasillaValida);
 	
-				// Pintar la casilla de morado solo si es una casilla transitable y  no está ocupada por una pieza
-				if (this.selectedPiece) {
-					const casillasLibres = this.children[4].getCasillasLibres(this.selectedPiece.pieza.isBlanca);
-	
-					for (let i = 0; i < casillasLibres.length; i++) {
-						if (casillasLibres[i][0] == currentCasilla.posI && casillasLibres[i][1] == currentCasilla.posJ) {
-							currentCasilla.setColorMov();
-							this.selectedPiece.moveTo(currentCasilla);
+				if (esCasillaValida) {
+					// Mover la pieza a la casilla seleccionada
+					currentCasilla.setColorMov(); 
+
+					this.selectedPiece.moveTo(currentCasilla, this);
+
+					// Devolver el color original de la pieza seleccionada
+					this.selectedPiece.traverse((child) => {
+						if (child.isMesh && child.material && child.material.color) {
+							child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
 						}
-					}
+					});
+					this.selectedPiece = null; // Deseleccionar la pieza
+					this.movimientosVerdes = []; // Limpiar los movimientos válidos
+				} 
+				else {
+					console.log("La casilla seleccionada no es válida para el movimiento.");
 				}
 			}
 		}

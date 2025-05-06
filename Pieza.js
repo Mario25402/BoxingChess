@@ -1,6 +1,5 @@
 import * as THREE from '../libs/three.module.js'
 import * as TWEEN from '../libs/tween.module.js'
-import { StraightAnimator } from './Animator.js'
 import { Casilla } from './Casilla.js'
 
 
@@ -15,11 +14,13 @@ class Pieza extends THREE.Object3D{
     constructor(ficha, casillaActual, isBlanca, DETAIL_LEVEL){
         super();
 
-        this.animacion = new StraightAnimator();
         this.casillaActual = casillaActual
         this.DETAIL_LEVEL = DETAIL_LEVEL;
         this.isBlanca = isBlanca
         this.ficha = ficha;
+
+        if (isBlanca) this.colorOriginal = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
+        else this.colorOriginal = new THREE.MeshStandardMaterial({color: 0x000000});
 
         switch (ficha) {
             case "Rey":
@@ -75,23 +76,62 @@ class Pieza extends THREE.Object3D{
         return posiblesMovimientos;
     }
 
-    moveTo(nueva) {
-        let nuevaPos = new THREE.Vector3(nueva.posI, 0, nueva.posJ);
-        let actual = new THREE.Vector3(this.casillaActual[0], 0, this.casillaActual[1]);
+    moveTo(nueva, scene) {
+        const nuevaPos = new THREE.Vector3(nueva.posI, 0, nueva.posJ);
+    
+        // Fase 1: Levantar la pieza
+        const levantar = new TWEEN.Tween(this.position)
+            .to({ y: 1 }, 300) // Elevar la pieza 1 unidad en el eje Y
+            .easing(TWEEN.Easing.Quadratic.Out);
+    
+        // Fase 2: Mover la pieza en línea recta
+        const mover = new TWEEN.Tween(this.position)
+            .to({ x: nuevaPos.x, z: nuevaPos.z }, 700) // Mover en X y Z
+            .easing(TWEEN.Easing.Quadratic.InOut);
+    
+        // Fase 3: Bajar la pieza
+        const bajar = new TWEEN.Tween(this.position)
+            .to({ y: 0 }, 300) // Bajar la pieza al tablero
+            .easing(TWEEN.Easing.Quadratic.In);
+    
+        // Encadenar las fases
+        levantar.chain(mover);
+        mover.chain(bajar);
+    
+        // Al finalizar la animación, actualizar referencias y restaurar el color
+        bajar.onComplete(() => {
+            // Quitar la pieza de la casilla actual
+            if (this.parent instanceof Casilla) {
+                this.parent.quitarPieza();
+            }
+    
+            // Mover la pieza a la nueva casilla
+            nueva.ponerPieza(this);
+    
+            // Actualizar la posición actual de la pieza
+            this.casillaActual = [nueva.posI, nueva.posJ];
+    
+            // Restaurar el color original de la pieza
+            this.traverse((child) => {
+                if (child.isMesh && child.material && child.material.color) {
+                    child.material.color.set(this.colorOriginal); // Restaurar el color original
+                    console.log("Color restaurado a:", this.colorOriginal);
+                }
+            });
+    
+            // Deseleccionar la pieza
+            if (scene && scene.selectedPiece === this) {
+                scene.selectedPiece = null;
+            }
+    
+            // Restaurar los colores del tablero
+            if (scene && scene.children[4]) {
+                scene.children[4].repaint();
+            }
+        });
     
         // Iniciar la animación
-        this.animacion.setAndStart(actual, nuevaPos, 100)
-
-        // Quitar la pieza de la casilla actual
-        if (this.parent instanceof Casilla) {
-            this.parent.quitarPieza();
-        }
-
-        // Mover la pieza a la nueva casilla
-        nueva.ponerPieza(this);
-
-        // Actualizar la posición actual de la pieza
-        this.casillaActual = [nueva.posI, nueva.posJ];
+        levantar.start();
     }
 }
 

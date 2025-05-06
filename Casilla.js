@@ -20,21 +20,17 @@ class Casilla extends THREE.Object3D{
         if (this.pieza != null){
             this.remove(this.pieza);
             this.pieza = null;
-
-            console.log("Pieza quitada de casilla", this.posI, this.posJ);
         }
     }
 
-    ponerPieza(pieza){
-        if (this.pieza != null){
-            this.remove(this.pieza);
+    ponerPieza(pieza) {
+        if (this.pieza != null) {
+            this.remove(this.pieza); // Eliminar la pieza existente si hay una
         }
-
-        console.log("Poniendo pieza en casilla", this.posI, this.posJ);
-
+    
         this.pieza = pieza;
-        this.pieza.position.set(this.posI, 0, this.posJ);
-        this.add(this.pieza);
+        this.pieza.position.set(this.posI, 0, this.posJ); // Actualizar la posición de la pieza en el tablero
+        this.add(this.pieza); // Añadir la pieza a la casilla
     }
 
     setPieza(pieza, isBlanca, DETAIL_LEVEL){
@@ -44,7 +40,6 @@ class Casilla extends THREE.Object3D{
     }
 
     setColorNavegable(){
-        console.log(this.posI, this.posJ);
         this.mesh.material.color.set(0x00FF00);
     }
 

@@ -61,17 +61,15 @@ class Tablero extends THREE.Object3D{
 
         // Peones Blancos y Negros
         for (let i = 0; i < 8; i++){
-            if (i != 3){
-                this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
-                this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
-            }
+            this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
+            this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
         }
     }
 
     crearRing() {
         // Crear el ring principal
         const ringGeo = new THREE.BoxGeometry(8.75, 1, 8.75);
-        const mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+        const mat = new THREE.MeshStandardMaterial({ color: 0x824600 });
         ringGeo.translate(3.5, -0.5, 3.5);
         const ringBrush = new CSG.Brush(ringGeo, mat);
     
@@ -87,7 +85,7 @@ class Tablero extends THREE.Object3D{
         let ringFinal = evaluador.evaluate(ringBrush, huecoBrush, CSG.SUBTRACTION);
     
         // Crear los palos del ring
-        const paloMat = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+        const paloMat = new THREE.MeshStandardMaterial({ color: 0xA003FF });
         const paloPositions = [
             [3.5 + 4.125, 0.4, 3.5 + 4.125],
             [3.5 - 4.125, 0.4, 3.5 - 4.125],
@@ -103,7 +101,7 @@ class Tablero extends THREE.Object3D{
         });
     
         // Crear las cuerdas del ring
-        const cuerdaMat = new THREE.MeshStandardMaterial({ color: 0x00FF00 });
+        const cuerdaMat = new THREE.MeshStandardMaterial({ color: 0xB7B7B7 });
         const cuerdaConfigs = [
             { pos: [3.5, 0.2, 3.5 + 4.125], rotZ: 90 },
             { pos: [3.5, 0.2, 3.5 - 4.125], rotZ: 90 },
@@ -176,7 +174,6 @@ class Tablero extends THREE.Object3D{
         let casillasLibres = this.getCasillasLibres(pieza.isBlanca);
         let casillasOcupadas = this.getCasillasOcupadas();
         let movimientos = pieza.getPosiblesMovimientos(casillasLibres, casillasOcupadas);
-        console.log(movimientos);
     
         // Cambiar color de las casillas de los movimientos
         for (let i = 0; i < movimientos.length; i++) {
@@ -190,6 +187,8 @@ class Tablero extends THREE.Object3D{
                 this.tablero[x][y].setColorNavegable(); // Pintar en verde si es una casilla libre
             }
         }
+
+        return movimientos;
     }
 
     repaint(){
