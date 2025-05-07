@@ -52,7 +52,7 @@ class Casilla extends THREE.Object3D{
     }
 
     setColorMov() {
-        this.mesh.material.color.set(0x800080);
+        this.mesh.material.color.set(0x006400);
     }
 }
 
