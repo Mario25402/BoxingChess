@@ -66,10 +66,15 @@ class Tablero extends THREE.Object3D{
         }
     }
 
+    arraysIguales(arr1, arr2){
+        if (arr1.length !== arr2.length) return false;
+        return arr1.every((val, index) => val === arr2[index]);
+    }
+
     crearRing() {
         // Crear el ring principal
         const ringGeo = new THREE.BoxGeometry(8.75, 1, 8.75);
-        const mat = new THREE.MeshStandardMaterial({ color: 0x824600 });
+        const mat = new THREE.MeshStandardMaterial({ color: 0x333333, matalness: 0.8, roughness: 0.2 });
         ringGeo.translate(3.5, -0.5, 3.5);
         const ringBrush = new CSG.Brush(ringGeo, mat);
     
@@ -85,7 +90,10 @@ class Tablero extends THREE.Object3D{
         let ringFinal = evaluador.evaluate(ringBrush, huecoBrush, CSG.SUBTRACTION);
     
         // Crear los palos del ring
-        const paloMat = new THREE.MeshStandardMaterial({ color: 0xA003FF });
+        let paloMat;
+        const paloMat1 = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+        const paloMat2 = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+
         const paloPositions = [
             [3.5 + 4.125, 0.4, 3.5 + 4.125],
             [3.5 - 4.125, 0.4, 3.5 - 4.125],
@@ -96,6 +104,13 @@ class Tablero extends THREE.Object3D{
         paloPositions.forEach(([x, y, z]) => {
             const paloGeo = new THREE.CylinderGeometry(0.1, 0.1, 1, this.DETAIL_LEVEL);
             paloGeo.translate(x, y, z);
+
+            if (this.arraysIguales([x, y, z], [3.5 - 4.125, 0.4, 3.5 + 4.125]) || 
+                this.arraysIguales([x, y, z], [3.5 + 4.125, 0.4, 3.5 - 4.125])) {
+                paloMat = paloMat1;
+            } 
+            else paloMat = paloMat2;
+
             const paloBrush = new CSG.Brush(paloGeo, paloMat);
             ringFinal = evaluador.evaluate(ringFinal, paloBrush, CSG.ADDITION); // Combinar con ADDITION
         });

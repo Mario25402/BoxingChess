@@ -88,10 +88,10 @@ class Rey extends THREE.Object3D {
 
 		let rey = evaluador.evaluate(cuerpo, cuello, CSG.ADDITION);
 		rey = evaluador.evaluate(rey, cruz, CSG.ADDITION);
-		rey.rotateY(MathUtils.degToRad(90));
 
 		// Convertir el resultado de CSG a THREE.Mesh para poder cambiar el color
 		const geomRey = rey.geometry; 
+		geomRey.rotateY(MathUtils.degToRad(90));
 		const meshRey = new THREE.Mesh(geomRey, material);
 		this.add(meshRey);
 
