@@ -76,6 +76,17 @@ class MyScene extends THREE.Scene {
 		this.stats = stats;
 	}
 
+	terminarMovimiento() {
+		// Restaurar el color de la pieza
+		this.selectedPiece.traverse((child) => {
+			if (child.isMesh && child.material.color) {
+				child.material.color.set(this.selectedPiece.originalColor);
+			}
+		});
+		
+		this.selectedPiece = null; // Deseleccionar la pieza
+	}
+
 	onMouseClick(event) {
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
@@ -103,15 +114,10 @@ class MyScene extends THREE.Scene {
 		
 			if (currentObject instanceof Pieza) {
 				// Restaurar el color de la pieza previamente seleccionada
-				if (this.selectedPiece) {
-					this.selectedPiece.traverse((child) => {
-						if (child.isMesh && child.material && child.material.color) {
-							child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
-						}
-					});
-				}
+				if (this.selectedPiece) 
+					this.terminarMovimiento();
 		
-				// Guardar la pieza seleccionada y su color original
+				// Guardar la pieza seleccionada
 				this.selectedPiece = currentObject;
 				this.selectedPiece.originalColor = null;
 		
@@ -130,15 +136,12 @@ class MyScene extends THREE.Scene {
 				});
 			}
 		} 
+
+		// Si no hay intersecciones (si se pulsa el fondo)
 		else {
-			// Si no hay intersecciones, se deselecciona cualquier pieza seleccionada
 			if (this.selectedPiece) {
-				this.selectedPiece.traverse((child) => {
-					if (child.isMesh && child.material && child.material.color) {
-						child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
-					}
-				});
-				this.selectedPiece = null; // Deseleccionar la pieza
+				// Restaurar el color de la pieza seleccionada
+				this.terminarMovimiento();
 
 				// Restaurar el color de las casillas
 				this.children[4].repaint();
@@ -152,8 +155,6 @@ class MyScene extends THREE.Scene {
     }
 
 	onRightClick(event) {
-		event.preventDefault(); // Evitar el menú contextual del navegador
-	
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 	
@@ -173,7 +174,7 @@ class MyScene extends THREE.Scene {
 		if (intersects.length > 0) {
 			const pickedObject = intersects[0].object;
 	
-			// Verificar si el objeto pertenece a una casilla
+			// Si es una pieza, escoger su casilla
 			let currentCasilla = pickedObject;
 			while (currentCasilla && !(currentCasilla instanceof Casilla)) {
 				currentCasilla = currentCasilla.parent;
@@ -184,28 +185,15 @@ class MyScene extends THREE.Scene {
 				const esCasillaValida = this.movimientosVerdes.some(
 					(casilla) => casilla[0] === currentCasilla.posI && casilla[1] === currentCasilla.posJ
 				);
-
-				console.log("Casilla seleccionada:", currentCasilla.posI, currentCasilla.posJ);
-				console.log("Movimientos válidos:", this.movimientosVerdes);
-				console.log("Es casilla válida:", esCasillaValida);
 	
 				if (esCasillaValida) {
-					// Mover la pieza a la casilla seleccionada
+					// Colorear la casilla seleccionada y mover la pieza
 					currentCasilla.setColorMov(); 
-
 					this.selectedPiece.moveTo(currentCasilla, this);
 
-					// Devolver el color original de la pieza seleccionada
-					this.selectedPiece.traverse((child) => {
-						if (child.isMesh && child.material && child.material.color) {
-							child.material.color.set(this.selectedPiece.originalColor); // Restaurar el color original
-						}
-					});
-					this.selectedPiece = null; // Deseleccionar la pieza
-					this.movimientosVerdes = []; // Limpiar los movimientos válidos
-				} 
-				else {
-					console.log("La casilla seleccionada no es válida para el movimiento.");
+					// Deseleccionar pieza y limpiar sus movimientos
+					this.terminarMovimiento();
+					this.movimientosVerdes = [];
 				}
 			}
 		}
