@@ -128,7 +128,11 @@ class MyScene extends THREE.Scene {
 						if (!this.selectedPiece.originalColor) {
 							this.selectedPiece.originalColor = child.material.color.getHex();
 						}
-						child.material.color.set(0xff0000);
+						if (this.selectedPiece.originalColor == 0x000000) {
+							child.material.color.set(0x0000ff);
+						}else{
+							child.material.color.set(0xff0000);
+						}	
 					}
 
 					// Restaurar el color de las casillas
@@ -207,7 +211,7 @@ class MyScene extends THREE.Scene {
 		this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
 		// Recuerda: Todas las unidades están en metros
 		// También se indica dónde se coloca
-		this.camera.position.set(14, 4, 14);
+		this.camera.position.set(12, 8, 0);
 		// Y hacia dónde mira
 		var look = new THREE.Vector3(0, 0, 0);
 		this.camera.lookAt(look);
