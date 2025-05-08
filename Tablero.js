@@ -90,29 +90,28 @@ class Tablero extends THREE.Object3D {
         let ringFinal = evaluador.evaluate(ringBrush, huecoBrush, CSG.SUBTRACTION);
 
         // Crear los palos del ring
-        let paloMat;
         const paloMat1 = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
         const paloMat2 = new THREE.MeshStandardMaterial({ color: 0x0000FF });
 
         const paloPositions = [
-            [3.5 + 4.125, 0.4, 3.5 + 4.125],
-            [3.5 - 4.125, 0.4, 3.5 - 4.125],
-            [3.5 + 4.125, 0.4, 3.5 - 4.125],
-            [3.5 - 4.125, 0.4, 3.5 + 4.125],
+            [3.5 - 4.125, 0.4, 3.5 + 4.125],  // Arriba izquierda
+            [3.5 - 4.125, 0.4, 3.5 - 4.125],  // Arriba derecha
+            [3.5 + 4.125, 0.4, 3.5 - 4.125],  // Abajo derecha
+            [3.5 + 4.125, 0.4, 3.5 + 4.125]  // Abajo izquierda
         ];
 
         paloPositions.forEach(([x, y, z]) => {
             const paloGeo = new THREE.CylinderGeometry(0.1, 0.1, 1, this.DETAIL_LEVEL);
             paloGeo.translate(x, y, z);
 
+            let paloMat = paloMat2;
             if (this.arraysIguales([x, y, z], [3.5 - 4.125, 0.4, 3.5 + 4.125]) ||
-                this.arraysIguales([x, y, z], [3.5 + 4.125, 0.4, 3.5 - 4.125])) {
+                this.arraysIguales([x, y, z], [3.5 - 4.125, 0.4, 3.5 - 4.125])) {
                 paloMat = paloMat1;
             }
-            else paloMat = paloMat2;
 
             const paloBrush = new CSG.Brush(paloGeo, paloMat);
-            ringFinal = evaluador.evaluate(ringFinal, paloBrush, CSG.ADDITION); // Combinar con ADDITION
+            ringFinal = evaluador.evaluate(ringFinal, paloBrush, CSG.ADDITION);
         });
 
         // Crear las cuerdas del ring
@@ -134,7 +133,7 @@ class Tablero extends THREE.Object3D {
             if (rotY) cuerdaGeo.rotateY(THREE.MathUtils.degToRad(rotY));
             cuerdaGeo.translate(...pos);
             const cuerdaBrush = new CSG.Brush(cuerdaGeo, cuerdaMat);
-            ringFinal = evaluador.evaluate(ringFinal, cuerdaBrush, CSG.ADDITION); // Combinar con ADDITION
+            ringFinal = evaluador.evaluate(ringFinal, cuerdaBrush, CSG.ADDITION);
         });
 
         // Añadir el ring completo a la escena
