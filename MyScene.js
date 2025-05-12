@@ -60,6 +60,9 @@ class MyScene extends THREE.Scene {
 
 		// Turno
 		this.turnoBlancas = true;
+
+		// Configuración inicial de la cámara activa
+		this.activeCamera = this.cameraBlancas; // Inicia con la cámara de las piezas blancas
 	}
 
 	initStats() {
@@ -93,7 +96,7 @@ class MyScene extends THREE.Scene {
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 	
-		this.raycaster.setFromCamera(this.mouse, this.camera);
+		this.raycaster.setFromCamera(this.mouse, this.activeCamera);
 	
 		// Recopilar todos los objetos detectables (incluyendo los hijos del Tablero)
 		const objetosDetectables = [];
@@ -166,10 +169,12 @@ class MyScene extends THREE.Scene {
 	}
 
 	onRightClick(event) {
+		event.preventDefault(); // Prevenir el menú contextual predeterminado
+	
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 	
-		this.raycaster.setFromCamera(this.mouse, this.camera);
+		this.raycaster.setFromCamera(this.mouse, this.activeCamera);
 	
 		// Recopilar todas las casillas del tablero
 		const casillas = [];
@@ -208,12 +213,12 @@ class MyScene extends THREE.Scene {
 	
 					// Cambiar el turno al otro equipo
 					this.turnoBlancas = !this.turnoBlancas;
-
+	
 					// Actualizar la cámara activa
 					this.updateCamera();
-				}
-			}
-		}
+				} 
+			} 
+		} 
 	}
 
 	createCameras() {
