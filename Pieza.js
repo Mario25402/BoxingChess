@@ -125,8 +125,8 @@ class Pieza extends THREE.Object3D{
             }
     
             // Restaurar los colores del tablero
-            if (scene && scene.children[4]) {
-                scene.children[4].repaint();
+            if (scene && scene.children[5]) {
+                scene.children[5].repaint();
             }
         });
     

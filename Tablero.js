@@ -74,7 +74,7 @@ class Tablero extends THREE.Object3D {
     crearRing() {
         // Crear el ring principal
         const ringGeo = new THREE.BoxGeometry(8.75, 1, 8.75);
-        const mat = new THREE.MeshStandardMaterial({ color: 0x333333, matalness: 0.8, roughness: 0.2 });
+        const mat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 });
         ringGeo.translate(3.5, -0.5, 3.5);
         const ringBrush = new CSG.Brush(ringGeo, mat);
 

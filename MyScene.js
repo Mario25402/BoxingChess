@@ -46,8 +46,7 @@ class MyScene extends THREE.Scene {
 		// Tras crear cada elemento se añadirá a la escena con   this.add(variable)
 		this.createLights();
 
-		// Tendremos una cámara con un control de movimiento con el ratón
-		this.createCamera();
+		this.createCameras();
 
 		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
 		// Todas las unidades están en metros
@@ -58,6 +57,9 @@ class MyScene extends THREE.Scene {
 		let tablero = new Tablero(8, 8);
 		tablero.position.set(-3.5, 0, -3.5);
 		this.add(tablero);
+
+		// Turno
+		this.turnoBlancas = true;
 	}
 
 	initStats() {
@@ -88,39 +90,46 @@ class MyScene extends THREE.Scene {
 	}
 
 	onMouseClick(event) {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
-
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-
-        // Recopilar todos los objetos detectables (incluyendo los hijos del Tablero)
-        const objetosDetectables = [];
-        this.traverse((child) => {
-            if (child.isMesh) {
-                objetosDetectables.push(child);
-            }
-        });
-
-        const intersects = this.raycaster.intersectObjects(objetosDetectables, true);
-
+		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+	
+		this.raycaster.setFromCamera(this.mouse, this.camera);
+	
+		// Recopilar todos los objetos detectables (incluyendo los hijos del Tablero)
+		const objetosDetectables = [];
+		this.traverse((child) => {
+			if (child.isMesh) {
+				objetosDetectables.push(child);
+			}
+		});
+	
+		const intersects = this.raycaster.intersectObjects(objetosDetectables, true);
+	
 		if (intersects.length > 0) {
 			const pickedObject = intersects[0].object;
-		
+	
 			// Verificar si el objeto pertenece a una pieza
 			let currentObject = pickedObject;
 			while (currentObject && !(currentObject instanceof Pieza)) {
 				currentObject = currentObject.parent;
 			}
-		
+	
 			if (currentObject instanceof Pieza) {
+				// Verificar si la pieza pertenece al equipo del turno actual
+				if (currentObject.isBlanca !== this.turnoBlancas) {
+					console.log("No es el turno de este equipo.");
+					return;
+				}
+	
 				// Restaurar el color de la pieza previamente seleccionada
-				if (this.selectedPiece) 
+				if (this.selectedPiece) {
 					this.terminarMovimiento();
-		
+				}
+	
 				// Guardar la pieza seleccionada
 				this.selectedPiece = currentObject;
 				this.selectedPiece.originalColor = null;
-		
+	
 				// Cambiar el color de la nueva pieza seleccionada
 				this.selectedPiece.traverse((child) => {
 					if (child.isMesh && child.material && child.material.color) {
@@ -130,33 +139,31 @@ class MyScene extends THREE.Scene {
 						}
 						if (this.selectedPiece.originalColor == 0x000000) {
 							child.material.color.set(0x0000ff);
-						}else{
+						} else {
 							child.material.color.set(0xff0000);
-						}	
+						}
 					}
-
+	
 					// Restaurar el color de las casillas
-					this.children[4].repaint();
+					this.children[5].repaint();
 				});
 			}
-		} 
-
-		// Si no hay intersecciones (si se pulsa el fondo)
-		else {
+		} else {
+			// Si no hay intersecciones (si se pulsa el fondo)
 			if (this.selectedPiece) {
 				// Restaurar el color de la pieza seleccionada
 				this.terminarMovimiento();
-
+	
 				// Restaurar el color de las casillas
-				this.children[4].repaint();
+				this.children[5].repaint();
 			}
-		}	
-
-		// Mostrar posibles movimientos de la pieza seleccionada
-		if (this.selectedPiece){	
-			this.movimientosVerdes = this.children[4].getPosiblesMovimientos(this.selectedPiece);
 		}
-    }
+	
+		// Mostrar posibles movimientos de la pieza seleccionada
+		if (this.selectedPiece) {
+			this.movimientosVerdes = this.children[5].getPosiblesMovimientos(this.selectedPiece);
+		}
+	}
 
 	onRightClick(event) {
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -192,18 +199,24 @@ class MyScene extends THREE.Scene {
 	
 				if (esCasillaValida) {
 					// Colorear la casilla seleccionada y mover la pieza
-					currentCasilla.setColorMov(); 
+					currentCasilla.setColorMov();
 					this.selectedPiece.moveTo(currentCasilla, this);
-
+	
 					// Deseleccionar pieza y limpiar sus movimientos
 					this.terminarMovimiento();
 					this.movimientosVerdes = [];
+	
+					// Cambiar el turno al otro equipo
+					this.turnoBlancas = !this.turnoBlancas;
+
+					// Actualizar la cámara activa
+					this.updateCamera();
 				}
 			}
 		}
 	}
 
-	createCamera() {
+	createCameras() {
 		// Para crear una cámara le indicamos
 		//   El ángulo del campo de visión en grados sexagesimales
 		//   La razón de aspecto ancho/alto
@@ -217,6 +230,11 @@ class MyScene extends THREE.Scene {
 		this.camera.lookAt(look);
 		this.add(this.camera);
 
+		this.cameraBlancas = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
+		this.cameraBlancas.position.set(-12, 8, 0); // Misma posición pero 	con x negativa
+    	this.cameraBlancas.lookAt(new THREE.Vector3(0, 0, 0));
+    	this.add(this.cameraBlancas);
+
 		// Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
 		this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
 		// Se configuran las velocidades de los movimientos
@@ -225,6 +243,16 @@ class MyScene extends THREE.Scene {
 		this.cameraControl.panSpeed = 0.5;
 		// Debe orbitar con respecto al punto de mira de la cámara
 		this.cameraControl.target = look;
+
+		this.activeCamera = this.cameraBlancas;
+	}
+
+	updateCamera() {
+		if (this.turnoBlancas) {
+			this.activeCamera = this.cameraBlancas; // Usar la cámara de las piezas blancas
+		} else {
+			this.activeCamera = this.camera; // Usar la cámara de las piezas negras
+		}
 	}
 
 	createGUI() {
@@ -311,12 +339,6 @@ class MyScene extends THREE.Scene {
 		return renderer;
 	}
 
-	getCamera() {
-		// En principio se devuelve la única cámara que tenemos
-		// Si hubiera varias cámaras, este método decidiría qué cámara devuelve cada vez que es consultado
-		return this.camera;
-	}
-
 	setCameraAspect(ratio) {
 		// Cada vez que el usuario modifica el tamaño de la ventana desde el gestor de ventanas de
 		// su sistema operativo hay que actualizar el ratio de aspecto de la cámara
@@ -347,7 +369,7 @@ class MyScene extends THREE.Scene {
 		TWEEN.update();
 
 		// Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
-		this.renderer.render(this, this.getCamera());
+		this.renderer.render(this, this.activeCamera);
 
 		// Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
 		// Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
