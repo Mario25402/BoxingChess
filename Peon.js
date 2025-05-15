@@ -11,8 +11,23 @@ class Peon extends THREE.Object3D {
 		let material;
 		const evaluador = new CSG.Evaluator();
 
-		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-		else material = new THREE.MeshStandardMaterial({color: 0x222222});
+		const loader = new THREE.TextureLoader();
+		const bumpTexture = loader.load('./imgs/pie.png');
+
+
+		if (isBlanca) {
+			material = new THREE.MeshStandardMaterial({
+				color: 0xFBDBB5,
+				bumpMap: bumpTexture,
+				bumpScale: 1,
+			});
+		} else {
+			material = new THREE.MeshStandardMaterial({
+				color: 0x222222,
+				bumpMap: bumpTexture,
+				bumpScale: 2,
+			});
+		}
 
 		// Cuerpo
 		this.shape = new THREE.Shape();

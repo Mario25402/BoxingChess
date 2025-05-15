@@ -151,7 +151,7 @@ class MyScene extends THREE.Scene {
 					}
 	
 					// Restaurar el color de las casillas
-					this.children[9].repaint();
+					this.children[13].repaint();
 				});
 			}
 		} else {
@@ -161,13 +161,13 @@ class MyScene extends THREE.Scene {
 				this.terminarMovimiento();
 	
 				// Restaurar el color de las casillas
-				this.children[9].repaint();
+				this.children[13].repaint();
 			}
 		}
 	
 		// Mostrar posibles movimientos de la pieza seleccionada
 		if (this.selectedPiece) {
-			this.movimientosVerdes = this.children[9].getPosiblesMovimientos(this.selectedPiece);
+			this.movimientosVerdes = this.children[13].getPosiblesMovimientos(this.selectedPiece);
 		}
 	}
 
@@ -251,6 +251,12 @@ class MyScene extends THREE.Scene {
 		this.cameraControl.panSpeed = 0.5;
 		// Debe orbitar con respecto al punto de mira de la cámara
 		this.cameraControl.target = look;
+
+		this.cameraControlBlancas = new TrackballControls(this.cameraBlancas, this.renderer.domElement);
+		this.cameraControlBlancas.rotateSpeed = 5;
+		this.cameraControlBlancas.zoomSpeed = -2;
+		this.cameraControlBlancas.panSpeed = 0.5;
+		this.cameraControlBlancas.target = look;
 
 		this.activeCamera = this.cameraBlancas;
 	}
@@ -345,6 +351,20 @@ class MyScene extends THREE.Scene {
 		this.add(this.spotLight);
 		//this.add(this.spotLight.target);
 
+		this.spotLight2 = new THREE.SpotLight(0xffffff, 150);
+		this.spotLight2.position.set(3.5 - 4.2 - 10, 1, 5.25); // Coloca la luz en una posición elevada
+		this.spotLight2.angle = Math.PI / 12;
+		this.spotLight2.target.position.set(3.5 - 4.2 - 0, -3.45, -3); // Apunta al centro de la escena
+		this.add(this.spotLight2);
+		this.add(this.spotLight2.target);
+
+		this.spotLight3 = new THREE.SpotLight(0xffffff, 150);
+		this.spotLight3.position.set(-(3.5 - 4.2 - 10), 1, -5.25); // Invertimos X y Z
+		this.spotLight3.angle = Math.PI / 12;
+		this.spotLight3.target.position.set(-(3.5 - 4.2 - 0), -3.45, 3); // Invertimos X y Z del target
+		this.add(this.spotLight3);
+		this.add(this.spotLight3.target);
+
 		this.spotLight.castShadow = true;
 		this.directinalLight.castShadow = true;
 		this.directinalLight2.castShadow = true;
@@ -416,7 +436,11 @@ class MyScene extends THREE.Scene {
 		// Se actualizan los elementos de la escena para cada frame
 
 		// Se actualiza la posición de la cámara según su controlador
-		this.cameraControl.update();
+		if (this.activeCamera === this.cameraBlancas) {
+			this.cameraControlBlancas.update();
+		} else {
+			this.cameraControl.update();
+		}
 
 		// Se actualiza el resto del modelo
 		TWEEN.update();

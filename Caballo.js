@@ -7,8 +7,23 @@ class Caballo extends THREE.Object3D {
 		super();
 
 		let material;
-		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-		else material = new THREE.MeshStandardMaterial({color: 0x222222});
+		const loader = new THREE.TextureLoader();
+		const bumpTexture = loader.load('./imgs/pie.png');
+
+
+		if (isBlanca) {
+			material = new THREE.MeshStandardMaterial({
+				color: 0xFBDBB5,
+				bumpMap: bumpTexture,
+				bumpScale: 1,
+			});
+		} else {
+			material = new THREE.MeshStandardMaterial({
+				color: 0x222222,
+				bumpMap: bumpTexture,
+				bumpScale: 2,
+			});
+		}
 
 		var objLoader = new OBJLoader();
 		objLoader.load('./obj/caballo1.obj', (object) => {

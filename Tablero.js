@@ -82,6 +82,23 @@ class Tablero extends THREE.Object3D {
         ringGeo.translate(3.5, -0.5, 3.5);
         const ringBrush = new CSG.Brush(ringGeo, mat);
 
+        var loader2 = new THREE.TextureLoader();
+        var textura = loader2.load('./imgs/box.png')
+        var mate = new THREE. MeshStandardMaterial ( {map:textura, color: 0xffffff, metalness: 0.8, roughness: 0.2} ) ;
+
+        const cartel = new THREE.BoxGeometry(0.45, 0.75, 4);
+        //const mate = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2 });
+        cartel.translate(3.5 + 4.2, -0.5, 3.5);
+        const cart = new THREE.Mesh(cartel,mate);
+        this.add(cart);
+
+        const cartel2 = new THREE.BoxGeometry(0.45, 0.75, 4);
+        //const mate = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2 });
+        cartel2.translate(3.5 - 4.2, -0.5, 3.5);
+        const cart2 = new THREE.Mesh(cartel2,mate);
+        this.add(cart2);
+
+
         // Crear el hueco del ring
         const huecoGeo = new THREE.BoxGeometry(8, 0.6, 8);
         huecoGeo.translate(3.5, -0.2, 3.5);
@@ -127,7 +144,15 @@ class Tablero extends THREE.Object3D {
         });
 
         // Crear las cuerdas del ring
-        const cuerdaMat = new THREE.MeshStandardMaterial({ color: 0xB7B7B7 });
+        const loader = new THREE.TextureLoader();
+        const bumpTexture = loader.load('./imgs/lazo.png');
+        //const cuerdaMat = new THREE.MeshStandardMaterial({ color: 0xB7B7B7 });
+        const cuerdaMat = new THREE.MeshStandardMaterial({
+            color:  0xB7B7B7,
+            bumpMap: bumpTexture,
+            bumpScale: 1,
+        });
+
         const cuerdaConfigs = [
             { pos: [3.5, 0.2, 3.5 + 4.125], rotZ: 90 },
             { pos: [3.5, 0.2, 3.5 - 4.125], rotZ: 90 },
