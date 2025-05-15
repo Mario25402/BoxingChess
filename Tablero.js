@@ -31,6 +31,10 @@ class Tablero extends THREE.Object3D {
                 if ((x + z) % 2 == 0) mat = matBlanco2;
                 let mesh = new THREE.Mesh(geom, mat);
 
+                //Añade sombras
+                mesh.receiveShadow = true;
+                mesh.castShadow = false;
+
                 let casilla = new Casilla(mesh, x, z);
                 this.tablero[x][z] = casilla;
                 this.add(casilla)
@@ -90,8 +94,16 @@ class Tablero extends THREE.Object3D {
         let ringFinal = evaluador.evaluate(ringBrush, huecoBrush, CSG.SUBTRACTION);
 
         // Crear los palos del ring
-        const paloMat1 = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
-        const paloMat2 = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+        const paloMat1 = new THREE.MeshStandardMaterial({ 
+            color: 0xFF0000, 
+            metalness: 0.75, 
+            roughness: 0.2 
+        });
+        const paloMat2 = new THREE.MeshStandardMaterial({ 
+            color: 0x0000FF, 
+            metalness: 0.75, 
+            roughness: 0.2 
+        });
 
         const paloPositions = [
             [3.5 - 4.125, 0.4, 3.5 + 4.125],  // Arriba izquierda
@@ -137,6 +149,12 @@ class Tablero extends THREE.Object3D {
         });
 
         // Añadir el ring completo a la escena
+        ringFinal.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
         this.add(ringFinal);
     }
 

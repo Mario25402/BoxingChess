@@ -8,7 +8,7 @@ class Caballo extends THREE.Object3D {
 
 		let material;
 		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-		else material = new THREE.MeshStandardMaterial({color: 0x000000});
+		else material = new THREE.MeshStandardMaterial({color: 0x222222});
 
 		var objLoader = new OBJLoader();
 		objLoader.load('./obj/caballo1.obj', (object) => {

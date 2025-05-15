@@ -13,7 +13,7 @@ class Rey extends THREE.Object3D {
 		const evaluador = new CSG.Evaluator();
 
 		if (isBlanca) material = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-		else material = new THREE.MeshStandardMaterial({color: 0x000000});
+		else material = new THREE.MeshStandardMaterial({color: 0x222222});
 
 		// Cuerpo
 		let shape = new THREE.Shape();

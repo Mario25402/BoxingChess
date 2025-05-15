@@ -20,7 +20,7 @@ class Pieza extends THREE.Object3D{
         this.ficha = ficha;
 
         if (isBlanca) this.colorOriginal = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-        else this.colorOriginal = new THREE.MeshStandardMaterial({color: 0x000000});
+        else this.colorOriginal = new THREE.MeshStandardMaterial({color: 0x222222});
 
         switch (ficha) {
             case "Rey":
@@ -58,6 +58,13 @@ class Pieza extends THREE.Object3D{
         if (!isBlanca) this.pieza.rotateY(THREE.MathUtils.degToRad(180));
 
         this.add(this.pieza);
+
+        this.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
     }
 
     getPosiblesMovimientos(casillasLibres, casillasOcupadas) {
@@ -125,8 +132,8 @@ class Pieza extends THREE.Object3D{
             }
     
             // Restaurar los colores del tablero
-            if (scene && scene.children[5]) {
-                scene.children[5].repaint();
+            if (scene && scene.children[9]) {
+                scene.children[9].repaint();
             }
         });
     

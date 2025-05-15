@@ -48,6 +48,9 @@ class MyScene extends THREE.Scene {
 
 		this.createCameras();
 
+		// En el constructor o en otro lugar
+		//this.setBackground('./imgs/board.png');
+
 		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
 		// Todas las unidades están en metros
 		this.axis = new THREE.AxesHelper(2);
@@ -140,7 +143,7 @@ class MyScene extends THREE.Scene {
 						if (!this.selectedPiece.originalColor) {
 							this.selectedPiece.originalColor = child.material.color.getHex();
 						}
-						if (this.selectedPiece.originalColor == 0x000000) {
+						if (this.selectedPiece.originalColor == 0x222222) {
 							child.material.color.set(0x0000ff);
 						} else {
 							child.material.color.set(0xff0000);
@@ -148,7 +151,7 @@ class MyScene extends THREE.Scene {
 					}
 	
 					// Restaurar el color de las casillas
-					this.children[5].repaint();
+					this.children[9].repaint();
 				});
 			}
 		} else {
@@ -158,13 +161,13 @@ class MyScene extends THREE.Scene {
 				this.terminarMovimiento();
 	
 				// Restaurar el color de las casillas
-				this.children[5].repaint();
+				this.children[9].repaint();
 			}
 		}
 	
 		// Mostrar posibles movimientos de la pieza seleccionada
 		if (this.selectedPiece) {
-			this.movimientosVerdes = this.children[5].getPosiblesMovimientos(this.selectedPiece);
+			this.movimientosVerdes = this.children[9].getPosiblesMovimientos(this.selectedPiece);
 		}
 	}
 
@@ -255,8 +258,11 @@ class MyScene extends THREE.Scene {
 	updateCamera() {
 		if (this.turnoBlancas) {
 			this.activeCamera = this.cameraBlancas; // Usar la cámara de las piezas blancas
+			this.spotLight.color.set(0xff0000); // Rojo para blancas
 		} else {
 			this.activeCamera = this.camera; // Usar la cámara de las piezas negras
+			this.spotLight.color.set(0x0000ff); // Azul para negras
+			this.spotLight.power = 250;
 		}
 	}
 
@@ -278,7 +284,7 @@ class MyScene extends THREE.Scene {
 		var folder = gui.addFolder('Luz y Ejes');
 
 		// Se le añade un control para la potencia de la luz puntual
-		folder.add(this.guiControls, 'lightPower', 0, 1000, 20)
+		/* folder.add(this.guiControls, 'lightPower', 0, 1000, 20)
 			.name('Luz puntual : ')
 			.onChange((value) => this.setLightPower(value));
 
@@ -290,7 +296,7 @@ class MyScene extends THREE.Scene {
 		// Y otro para mostrar u ocultar los ejes
 		folder.add(this.guiControls, 'axisOnOff')
 			.name('Mostrar ejes : ')
-			.onChange((value) => this.setAxisVisible(value));
+			.onChange((value) => this.setAxisVisible(value)) */;
 
 		return gui;
 	}
@@ -300,7 +306,11 @@ class MyScene extends THREE.Scene {
 		// La luz ambiental solo tiene un color y una intensidad
 		// Se declara como   var   y va a ser una variable local a este método
 		//    se hace así puesto que no va a ser accedida desde otros métodos
-		this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
+		
+		//this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
+		
+		this.ambientLight = new THREE.AmbientLight('white', 0.5);
+
 		// La añadimos a la escena
 		this.add(this.ambientLight);
 
@@ -308,10 +318,36 @@ class MyScene extends THREE.Scene {
 		// La luz focal, además tiene una posición, y un punto de mira
 		// Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
 		// En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-		this.pointLight = new THREE.PointLight(0xffffff);
-		this.pointLight.power = this.guiControls.lightPower;
+		/* this.pointLight = new THREE.PointLight(0xffffff);
+		//this.pointLight.power = this.guiControls.lightPower;
+		this.pointLight.power = 250;
 		this.pointLight.position.set(2, 3, 1);
-		this.add(this.pointLight);
+		this.add(this.pointLight); */
+
+		this.directinalLight = new THREE.DirectionalLight(0xffffff, 1.25);
+		this.directinalLight.position.set(-(3.5 - 4.125+ 3) , 3, 0);
+		this.add(this.directinalLight);
+
+		this.directinalLight.target.position.set(3.5 - 4.125, 0, 0);
+		this.add(this.directinalLight.target);
+
+		this.directinalLight2 = new THREE.DirectionalLight(0xffffff, 1.25);
+		this.directinalLight2.position.set(3.5 - 4.125 + 3, 3, 0);
+		this.add(this.directinalLight2);
+
+		this.directinalLight2.target.position.set(-(3.5 - 4.125), 0, 0);
+		this.add(this.directinalLight2.target);
+
+		this.spotLight = new THREE.SpotLight(0xff0000, 250);
+		this.spotLight.position.set(0, 5, 0); // Coloca la luz en una posición elevada
+		this.spotLight.power = 250;
+		//this.spotLight.target.position.set(0, 0, 0); // Apunta al centro de la escena
+		this.add(this.spotLight);
+		//this.add(this.spotLight.target);
+
+		this.spotLight.castShadow = true;
+		this.directinalLight.castShadow = true;
+		this.directinalLight2.castShadow = true;
 	}
 
 	setLightPower(valor) {
@@ -338,10 +374,22 @@ class MyScene extends THREE.Scene {
 		// Se establece el tamaño, se aprovecha la totalidad de la ventana del navegador
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
+		renderer.shadowMap.enabled = true;
+    	renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Mejor calidad
+
 		// La visualización se muestra en el lienzo recibido
 		$(myCanvas).append(renderer.domElement);
 
 		return renderer;
+	}
+
+	setBackground(imagePath) {
+		// Cargar la textura de la imagen
+		const loader = new THREE.TextureLoader();
+		loader.load(imagePath, (texture) => {
+			// Asignar la textura como fondo de la escena
+			this.background = texture;
+		});
 	}
 
 	setCameraAspect(ratio) {

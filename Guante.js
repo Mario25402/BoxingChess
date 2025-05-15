@@ -18,7 +18,7 @@ class Guante extends THREE.Object3D {
         else{
             //Azul
             material = new THREE.MeshStandardMaterial({color: 0x0000FF});
-            material2 = new THREE.MeshStandardMaterial({color: 0x000000})
+            material2 = new THREE.MeshStandardMaterial({color: 0x222222})
         }
 
         // Puño
