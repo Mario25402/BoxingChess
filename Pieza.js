@@ -148,7 +148,13 @@ class Pieza extends THREE.Object3D{
     }
 
     movimientoGolpe(scene, nueva){
-        const nuevaPosPelea = new THREE.Vector3(scene.oponente.parent.posI -1, 0, scene.oponente.parent.posJ);
+        // Guardar la posición de la casilla del oponente antes de eliminarlo
+        const oponenteCasillaPos = [
+            scene.oponente.parent.posI,
+            scene.oponente.parent.posJ
+        ];
+
+        const nuevaPosPelea = new THREE.Vector3(scene.oponente.parent.posI -0.6, 0, scene.oponente.parent.posJ);
         
         // Fase 1: Levantar la pieza
         const levantar = new TWEEN.Tween(this.position)
@@ -163,6 +169,7 @@ class Pieza extends THREE.Object3D{
             .to({ y: 0 }, 300)
             .easing(TWEEN.Easing.Quadratic.In);
 
+        // Lanza al peón solo cuando termina el puñetazo de la reina
         const lanzar = new TWEEN.Tween(scene.oponente.position)
             .to({ x: scene.oponente.position.x + 3, y: 2, z: scene.oponente.position.z + 3 }, 500)
             .easing(TWEEN.Easing.Quadratic.Out)
@@ -173,7 +180,6 @@ class Pieza extends THREE.Object3D{
                 scene.remove(scene.oponente);
                 scene.oponente = null; // Limpiar la referencia
             });
-        
 
         const mover = new TWEEN.Tween(this.position)
             .to({ x: nuevaPosPelea.x + 1, z: nuevaPosPelea.z }, 700)
@@ -182,40 +188,50 @@ class Pieza extends THREE.Object3D{
         // Encadenar las fases
         levantar.chain(moverPelea);
         moverPelea.chain(bajar);
-        bajar.chain(lanzar);
+        bajar.onComplete(() => {
+            // Solo si la pieza es una reina
+            if (this.ficha === "Reina" && typeof this.pieza.animarGolpe === "function") {
+                // Espera a que termine el golpe para lanzar al peón
+                this.pieza.animarGolpe(() => {
+                    lanzar.start();
+                });
+            } else {
+                lanzar.start();
+            }
+        });
         lanzar.chain(mover);
-    
+
         // Al finalizar la animación, actualizar referencias y restaurar el color
         mover.onComplete(() => {
             // Quitar la pieza de la casilla actual
             if (this.parent instanceof Casilla) {
                 this.parent.quitarPieza();
             }
-    
+
             // Mover la pieza a la nueva casilla
             nueva.ponerPieza(this);
-    
-            // Actualizar la posición actual de la pieza
-            this.casillaActual = [scene.oponente.parent.posI, scene.oponente.parent.posJ];
-    
+
+            // Actualizar la posición actual de la pieza usando la posición guardada
+            this.casillaActual = [oponenteCasillaPos[0], oponenteCasillaPos[1]];
+
             // Restaurar el color original de la pieza
             this.traverse((child) => {
                 if (child.isMesh && child.material && child.material.color) {
                     child.material.color.set(this.colorOriginal);
                 }
             });
-    
+
             // Deseleccionar la pieza
             if (scene && scene.selectedPiece === this) {
                 scene.selectedPiece = null;
             }
-    
+
             // Restaurar los colores del tablero
             if (scene && scene.children[13]) {
                 scene.children[13].repaint();
             }
         });
-    
+
         // Iniciar la animación
         levantar.start();
     }
