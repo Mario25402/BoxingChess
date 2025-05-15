@@ -65,7 +65,7 @@ class Tablero extends THREE.Object3D {
 
         // Peones Blancos y Negros
         for (let i = 0; i < 8; i++) {
-            this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
+            //this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
             this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
         }
     }

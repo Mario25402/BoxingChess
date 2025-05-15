@@ -34,7 +34,10 @@ class MyScene extends THREE.Scene {
 		//Raycaster y vector del ratón
 		this.raycaster = new THREE.Raycaster();
 		this.mouse = new THREE.Vector2();
+
 		this.selectedPiece = null;
+		this.turnoBlancas = true;
+		this.oponente = null
 
 		// Se añade un listener para detectar el clic del ratón
 		window.addEventListener('click', (event) => this.onMouseClick(event));
@@ -47,6 +50,7 @@ class MyScene extends THREE.Scene {
 		this.createLights();
 
 		this.createCameras();
+		this.update();
 
 		// En el constructor o en otro lugar
 		//this.setBackground('./imgs/board.png');
@@ -60,9 +64,6 @@ class MyScene extends THREE.Scene {
 		let tablero = new Tablero(8, 8);
 		tablero.position.set(-3.5, 0, -3.5);
 		this.add(tablero);
-
-		// Turno
-		this.turnoBlancas = true;
 
 		// Configuración inicial de la cámara activa
 		this.activeCamera = this.cameraBlancas; // Inicia con la cámara de las piezas blancas
@@ -172,8 +173,6 @@ class MyScene extends THREE.Scene {
 	}
 
 	onRightClick(event) {
-		event.preventDefault(); // Prevenir el menú contextual predeterminado
-	
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 	
@@ -206,6 +205,13 @@ class MyScene extends THREE.Scene {
 				);
 	
 				if (esCasillaValida) {
+					// Verificar si hay una pieza que se va a comer
+					if (currentCasilla.pieza && (currentCasilla.pieza.isBlanca !== this.turnoBlancas)) {
+						this.oponente = currentCasilla.pieza;
+						console.log("Oponente: " + this.oponente.ficha);
+					}
+					else this.oponente = null;
+
 					// Colorear la casilla seleccionada y mover la pieza
 					currentCasilla.setColorMov();
 					this.selectedPiece.moveTo(currentCasilla, this);

@@ -1,4 +1,5 @@
 import * as THREE from '../libs/three.module.js'
+import * as TWEEN from '../libs/tween.module.js'
 import * as CSG from '../libs/three-bvh-csg.js'
 import { MathUtils } from '../libs/three.module.js';
 import { Guante } from './Guante.js';
@@ -158,6 +159,43 @@ class Reina extends THREE.Object3D {
 		}
 	
 		return movimientos;
+	}
+
+	animarGolpe() {
+		const guanteDer = this.children[1].children[0];
+		const posicionInicial = guanteDer.position.clone()
+		const rotacionInicial = guanteDer.rotation.clone();
+	
+		// Fase 1: Girar el guante hacia el objetivo
+		const girar = new TWEEN.Tween(guanteDer.rotation)
+			.to({ y: rotacionInicial.y + MathUtils.degToRad(180) }, 300)
+			.easing(TWEEN.Easing.Quadratic.Out);
+	
+		// Fase 2: Cargar el golpe (retraer el guante)
+		const cargar = new TWEEN.Tween(guanteDer.position)
+			.to({ z: posicionInicial.z - 1 }, 300)
+			.easing(TWEEN.Easing.Quadratic.In);
+	
+		// Fase 3: Golpear (avanzar el guante hacia adelante)
+		const golpear = new TWEEN.Tween(guanteDer.position)
+			.to({ z: posicionInicial.z + 1 }, 200) // Mover hacia adelante 1 unidad
+			.easing(TWEEN.Easing.Quadratic.Out);
+	
+		// Fase 4: Volver a la posición inicial
+		const volver = new TWEEN.Tween(guanteDer.position)
+			.to({ z: posicionInicial.z }) // Volver a la posición inicial
+			.easing(TWEEN.Easing.Quadratic.In)
+			.onComplete(() => {
+				guanteDer.rotation.copy(rotacionInicial);
+			});
+	
+		// Encadenar las fases
+		girar.chain(cargar);
+		cargar.chain(golpear);
+		golpear.chain(volver);
+	
+		// Iniciar la animación
+		girar.start();
 	}
 }
 
