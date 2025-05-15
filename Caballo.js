@@ -15,6 +15,8 @@ class Caballo extends THREE.Object3D {
 			object.traverse((child) => {
 				if (child.isMesh) {
 					child.material = material; // Asignar el material
+					child.castShadow = true;   // Proyecta sombra
+            		child.receiveShadow = true;
 				}
 			});
 			object.position.set(0, 0, 0);
