@@ -58,7 +58,7 @@ class Tablero extends THREE.Object3D {
         this.tablero[7][1].setPieza("Caballo", false, this.DETAIL_LEVEL);
         this.tablero[7][2].setPieza("Alfil", false, this.DETAIL_LEVEL);
         this.tablero[7][3].setPieza("Rey", false, this.DETAIL_LEVEL);
-        this.tablero[2][4].setPieza("Reina", false, this.DETAIL_LEVEL);
+        this.tablero[7][4].setPieza("Reina", false, this.DETAIL_LEVEL);
         this.tablero[7][5].setPieza("Alfil", false, this.DETAIL_LEVEL);
         this.tablero[7][6].setPieza("Caballo", false, this.DETAIL_LEVEL);
         this.tablero[7][7].setPieza("Torre", false, this.DETAIL_LEVEL);
@@ -66,7 +66,7 @@ class Tablero extends THREE.Object3D {
         // Peones Blancos y Negros
         for (let i = 0; i < 8; i++) {
             this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
-            //this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
+            this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
         }
     }
 
@@ -255,101 +255,6 @@ class Tablero extends THREE.Object3D {
             });
         });
     }
-
-    // Movmiento casilla a casilla (arrglar caballo)
-    /*moveTo(nueva, scene) {
-        const camino = this.calcularCamino(this.casillaActual, nueva); // Calcula las casillas intermedias
-        const animaciones = [];
-
-        // Crear animaciones para cada casilla en el camino
-        for (let i = 0; i < camino.length; i++) {
-            const casilla = camino[i];
-            const nuevaPos = new THREE.Vector3(casilla[0], 0, casilla[1]);
-
-            // Fase 1: Levantar la pieza
-            const levantar = new TWEEN.Tween(this.position)
-                .to({ y: 1 }, 300) // Elevar la pieza 1 unidad en el eje Y
-                .easing(TWEEN.Easing.Quadratic.Out);
-
-            // Fase 2: Mover la pieza en línea recta
-            const mover = new TWEEN.Tween(this.position)
-                .to({ x: nuevaPos.x, z: nuevaPos.z }, 700) // Mover en X y Z
-                .easing(TWEEN.Easing.Quadratic.InOut);
-
-            // Fase 3: Bajar la pieza
-            const bajar = new TWEEN.Tween(this.position)
-                .to({ y: 0 }, 300) // Bajar la pieza al tablero
-                .easing(TWEEN.Easing.Quadratic.In);
-
-            // Encadenar las fases
-            levantar.chain(mover);
-            mover.chain(bajar);
-
-            // Agregar la animación al arreglo
-            animaciones.push(levantar, mover, bajar);
-        }
-
-        // Encadenar todas las animaciones
-        for (let i = 0; i < animaciones.length - 1; i++) {
-            animaciones[i].chain(animaciones[i + 1]);
-        }
-
-        // Al finalizar la última animación, actualizar referencias y restaurar el color
-        animaciones[animaciones.length - 1].onComplete(() => {
-            // Quitar la pieza de la casilla actual
-            if (this.parent instanceof Casilla) {
-                this.parent.quitarPieza();
-            }
-
-            // Mover la pieza a la nueva casilla
-            nueva.ponerPieza(this);
-
-            // Actualizar la posición actual de la pieza
-            this.casillaActual = [nueva.posI, nueva.posJ];
-
-            // Restaurar el color original de la pieza
-            this.traverse((child) => {
-                if (child.isMesh && child.material && child.material.color) {
-                    child.material.color.set(this.colorOriginal); // Restaurar el color original
-                }
-            });
-
-            // Deseleccionar la pieza
-            if (scene && scene.selectedPiece === this) {
-                scene.selectedPiece = null;
-            }
-
-            // Restaurar los colores del tablero
-            if (scene && scene.children[4]) {
-                scene.children[4].repaint();
-            }
-        });
-
-        // Iniciar la animación
-        animaciones[0].start();
-    }
-
-    // Método para calcular el camino entre dos casillas
-    calcularCamino(casillaActual, nueva) {
-        const camino = [];
-        const [x1, y1] = casillaActual;
-        const [x2, y2] = [nueva.posI, nueva.posJ];
-
-        // Movimiento en línea recta (puedes ajustar esto según las reglas de cada pieza)
-        const dx = Math.sign(x2 - x1);
-        const dy = Math.sign(y2 - y1);
-
-        let x = x1;
-        let y = y1;
-
-        while (x !== x2 || y !== y2) {
-            x += dx;
-            y += dy;
-            camino.push([x, y]);
-        }
-
-        return camino;
-    } */
 
 }
 

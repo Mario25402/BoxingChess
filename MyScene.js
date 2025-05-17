@@ -26,6 +26,8 @@ class MyScene extends THREE.Scene {
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
 		this.renderer = this.createRenderer(myCanvas);
 
+		this.golpeCameraMode = "ninguna"; // Inicializa la cámara de golpe en modo "ninguna"
+
 		// Se añade a la gui los controles para manipular los elementos de esta clase
 		this.gui = this.createGUI();
 
@@ -152,7 +154,7 @@ class MyScene extends THREE.Scene {
 					}
 	
 					// Restaurar el color de las casillas
-					this.children[13].repaint();
+					this.children[14].repaint();
 				});
 			}
 		} else {
@@ -162,13 +164,13 @@ class MyScene extends THREE.Scene {
 				this.terminarMovimiento();
 	
 				// Restaurar el color de las casillas
-				this.children[13].repaint();
+				this.children[14].repaint();
 			}
 		}
 	
 		// Mostrar posibles movimientos de la pieza seleccionada
 		if (this.selectedPiece) {
-			this.movimientosVerdes = this.children[13].getPosiblesMovimientos(this.selectedPiece);
+			this.movimientosVerdes = this.children[14].getPosiblesMovimientos(this.selectedPiece);
 		}
 	}
 
@@ -264,6 +266,12 @@ class MyScene extends THREE.Scene {
 		this.cameraControlBlancas.panSpeed = 0.5;
 		this.cameraControlBlancas.target = look;
 
+		// Cámara para el golpe de la reina
+		this.golpeCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 50);
+		this.golpeCamera.position.set(0, 2, 2); // Ajusta la posición según tu escena
+		this.golpeCamera.lookAt(new THREE.Vector3(0, 0, 0));
+		this.add(this.golpeCamera);
+
 		this.activeCamera = this.cameraBlancas;
 	}
 
@@ -294,6 +302,8 @@ class MyScene extends THREE.Scene {
 
 		// Se crea una sección para los controles de esta clase
 		var folder = gui.addFolder('Luz y Ejes');
+
+		gui.add(this, 'golpeCameraMode', ['primeraPersona', 'lateral', 'ninguna']).name('Cámara Golpe');
 
 		// Se le añade un control para la potencia de la luz puntual
 		/* folder.add(this.guiControls, 'lightPower', 0, 1000, 20)

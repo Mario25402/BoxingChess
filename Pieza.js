@@ -139,8 +139,8 @@ class Pieza extends THREE.Object3D{
             }
     
             // Restaurar los colores del tablero
-            if (scene && scene.children[13]) {
-                scene.children[13].repaint();
+            if (scene && scene.children[14]) {
+                scene.children[14].repaint();
             }
         });
     
@@ -199,14 +199,51 @@ class Pieza extends THREE.Object3D{
         moverPelea.chain(bajar);
         lanzar.chain(mover);
 
-        // Al finalizar la animación, actualizar referencias y restaurar el color
         bajar.onComplete(() => {
-            // Solo si la pieza es una reina
             if (this.ficha === "Reina" && typeof this.pieza.animarGolpe === "function") {
-                // Espera a que termine el golpe para lanzar al peón
-                this.pieza.animarGolpe(() => {
-                    lanzar.start();
-                });
+                const objetivo = new THREE.Vector3();
+                scene.oponente.getWorldPosition(objetivo);
+                const origen = new THREE.Vector3();
+                this.getWorldPosition(origen);
+
+                let camPos;
+
+            if (scene.golpeCameraMode === "primeraPersona") {
+                // PRIMERA PERSONA
+                const alturaOjos = 1;
+                camPos = origen.clone();
+                camPos.y += alturaOjos;
+                const alturaPeon = 0.5;
+                objetivo.y += alturaPeon;
+                const direccion = objetivo.clone().sub(origen).normalize();
+                camPos.add(direccion.clone().multiplyScalar(0.2));
+                scene.golpeCamera.position.copy(camPos);
+                scene.golpeCamera.lookAt(objetivo);
+                scene.activeCamera = scene.golpeCamera;
+            } else if (scene.golpeCameraMode === "lateral") {
+                // LATERAL
+                const direccion = objetivo.clone().sub(origen).normalize();
+                const lateral = new THREE.Vector3(-direccion.z, 0, direccion.x).normalize();
+                const distancia = 3;
+                const altura = 3;
+                camPos = origen.clone().add(lateral.multiplyScalar(-distancia));
+                camPos.y += altura;
+                scene.golpeCamera.position.copy(camPos);
+                scene.golpeCamera.lookAt(objetivo);
+                scene.activeCamera = scene.golpeCamera;
+            }
+            // Si es "ninguna", NO cambies la cámara ni hagas nada
+
+            this.pieza.animarGolpe(() => {
+                lanzar.start();
+                setTimeout(() => {
+                    if (this.isBlanca) {
+                        scene.activeCamera = scene.camera;
+                    } else {
+                        scene.activeCamera = scene.cameraBlancas;
+                    }
+                }, 550);
+            });
             } else {
                 lanzar.start();
             }
@@ -237,8 +274,8 @@ class Pieza extends THREE.Object3D{
             }
 
             // Restaurar los colores del tablero
-            if (scene && scene.children[13]) {
-                scene.children[13].repaint();
+            if (scene && scene.children[14]) {
+                scene.children[14].repaint();
             }
         });
 
