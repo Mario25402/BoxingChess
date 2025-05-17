@@ -84,7 +84,8 @@ class Pieza extends THREE.Object3D{
     }
 
     moveTo(nueva, scene) {
-        if (scene.selectedPiece.ficha == "Reina" && (scene.oponente && scene.oponente.ficha == "Peon"))
+        if (scene.selectedPiece.ficha == "Reina" 
+        && (scene.oponente && scene.oponente.ficha == "Peon"))
             this.movimientoGolpe(scene, nueva);
 
         else this.movimientoNormal(scene, nueva)
@@ -154,8 +155,16 @@ class Pieza extends THREE.Object3D{
             scene.oponente.parent.posJ
         ];
 
-        const nuevaPosPelea = new THREE.Vector3(scene.oponente.parent.posI -0.6, 0, scene.oponente.parent.posJ);
-        
+        let acercamiento = -0.6;
+        let direccion = -9;
+
+        if (this.isBlanca){
+            acercamiento = 0.6
+            direccion = 9;
+        }
+
+        const nuevaPosPelea = new THREE.Vector3(scene.oponente.parent.posI - acercamiento, 0, scene.oponente.parent.posJ);
+
         // Fase 1: Levantar la pieza
         const levantar = new TWEEN.Tween(this.position)
             .to({ y: 1 }, 300)
@@ -171,7 +180,7 @@ class Pieza extends THREE.Object3D{
 
         // Lanza al peón solo cuando termina el puñetazo de la reina
         const lanzar = new TWEEN.Tween(scene.oponente.position)
-            .to({ x: scene.oponente.position.x + 3, y: 2, z: scene.oponente.position.z + 3 }, 500)
+            .to({ x: scene.oponente.position.x + direccion, y: 2, z: scene.oponente.position.z + direccion }, 500)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onComplete(() => {
                 if (scene.oponente.parent instanceof Casilla) {
@@ -182,12 +191,15 @@ class Pieza extends THREE.Object3D{
             });
 
         const mover = new TWEEN.Tween(this.position)
-            .to({ x: nuevaPosPelea.x + 1, z: nuevaPosPelea.z }, 700)
+            .to({ x: nuevaPosPelea.x + acercamiento, z: nuevaPosPelea.z }, 700)
             .easing(TWEEN.Easing.Quadratic.InOut);
 
         // Encadenar las fases
         levantar.chain(moverPelea);
         moverPelea.chain(bajar);
+        lanzar.chain(mover);
+
+        // Al finalizar la animación, actualizar referencias y restaurar el color
         bajar.onComplete(() => {
             // Solo si la pieza es una reina
             if (this.ficha === "Reina" && typeof this.pieza.animarGolpe === "function") {
@@ -199,9 +211,7 @@ class Pieza extends THREE.Object3D{
                 lanzar.start();
             }
         });
-        lanzar.chain(mover);
 
-        // Al finalizar la animación, actualizar referencias y restaurar el color
         mover.onComplete(() => {
             // Quitar la pieza de la casilla actual
             if (this.parent instanceof Casilla) {

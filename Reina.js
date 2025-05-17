@@ -124,6 +124,7 @@ class Reina extends THREE.Object3D {
 		guantes.guante.add(axesHelper);
 		
 		this.add(guantes); */
+
 		// --- NUEVOS BRAZOS ARTICULADOS ---
         const brazoIzq = new Guan_R(isBlanca, DETAIL_LEVEL);
         const brazoDer = new Guan_R(isBlanca, DETAIL_LEVEL);
@@ -195,48 +196,66 @@ class Reina extends THREE.Object3D {
 		const hombro = brazo.pivoteHombro;
 		const codo = brazo.pivoteCodo;
 
-		const rotHombroIniX = hombro.rotation.x;
 		const rotHombroIniY = hombro.rotation.y;
 		const rotHombroIniZ = hombro.rotation.z;
 		const rotCodoIni = codo.rotation.x;
+		const rotCodoIniY = codo.rotation.y;
 
 		// 1. Sube el brazo a -90° en Z (posición horizontal)
 		const subir = new TWEEN.Tween({ z: rotHombroIniZ })
-			.to({ z: -Math.PI / 2 }, 200)
+			.to({ z: -Math.PI / 2 }, 500)
 			.onUpdate(({ z }) => {
 				hombro.rotation.z = z;
+				this.brazoIzq.repaint();
+				this.brazoDer.repaint();
 			});
 
 		// 2. Echa el brazo para atrás en Y
-		const atras = new TWEEN.Tween({ y: rotHombroIniY })
-			.to({ y: THREE.MathUtils.degToRad(20) }, 200)
-			.onUpdate(({ y }) => {
+		const atras = new TWEEN.Tween({ y: rotHombroIniY, c: rotCodoIni, yc: rotCodoIniY })
+			.to({ y: THREE.MathUtils.degToRad(40),
+				  c: THREE.MathUtils.degToRad(20),
+				  yc: THREE.MathUtils.degToRad(100)
+			}, 700)
+			.onUpdate(({ y, c, yc }) => {
 				hombro.rotation.y = y;
+				codo.rotation.x = c;
+				codo.rotation.y = yc;
 			});
 
 		// 3. Puñetazo: vuelve el brazo hacia adelante en Y y flexiona el codo
-		const punetazo = new TWEEN.Tween({ y: THREE.MathUtils.degToRad(20), c: rotCodoIni })
-			.to({ 
-				y: rotHombroIniY,
-				c: rotCodoIni + THREE.MathUtils.degToRad(60)
-			}, 300)
+		const punetazo = new TWEEN.Tween({ y: THREE.MathUtils.degToRad(40), c: THREE.MathUtils.degToRad(20) })
+			.to({ y: rotHombroIniY - 0.25,
+				  c: THREE.MathUtils.degToRad(-10)
+			}, 400)
 			.onUpdate(({ y, c }) => {
 				hombro.rotation.y = y;
 				codo.rotation.x = c;
-			});
-
-		// 4. Regresa a la posición original (Y, C, Z)
-		const regreso = new TWEEN.Tween({ y: rotHombroIniY, c: rotCodoIni + THREE.MathUtils.degToRad(60), z: -Math.PI / 2 })
-			.to({ y: rotHombroIniY, c: rotCodoIni, z: rotHombroIniZ }, 300)
-			.onUpdate(({ y, c, z }) => {
-				hombro.rotation.y = y;
-				codo.rotation.x = c;
-				hombro.rotation.z = z;
 			})
 			.onComplete(() => {
 				if (typeof onGolpeCompleto === "function") onGolpeCompleto();
 			});
 
+		// 4. Regresa a la posición original (Y, C, Z)
+		const regreso = new TWEEN.Tween({ 
+			y: rotHombroIniY - 0.25, 
+			z: -Math.PI / 2, 
+			c: THREE.MathUtils.degToRad(-10), 
+			yc: codo.rotation.y
+		})
+		.to({ 
+			y: rotHombroIniY,
+			z: rotHombroIniZ,
+			c: rotCodoIni,
+			yc: rotCodoIniY
+		}, 1000)
+		.onUpdate(({ y, z, c, yc }) => {
+			hombro.rotation.y = y;
+			hombro.rotation.z = z;
+			codo.rotation.x = c;
+			codo.rotation.y = yc;
+		});
+			
+ 
 		subir.chain(atras);
 		atras.chain(punetazo);
 		punetazo.chain(regreso);

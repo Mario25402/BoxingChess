@@ -4,16 +4,18 @@ import * as CSG from '../libs/three-bvh-csg.js'
 class Guan_R extends THREE.Object3D {
     constructor(isBlanca, DETAIL_LEVEL) {
         super();
+        this.isBlanca = isBlanca;
 
         // Materiales
         let material, material2;
-        if (isBlanca){
+        if (this.isBlanca){
             material = new THREE.MeshStandardMaterial({color: 0xFF0000});
             material2 = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
         } else {
             material = new THREE.MeshStandardMaterial({color: 0x0000FF});
             material2 = new THREE.MeshStandardMaterial({color: 0x222222});
         }
+
         const evaluador = new CSG.Evaluator();
 
         // --- Geometría del guante (igual que Guante.js) ---
@@ -104,6 +106,8 @@ class Guan_R extends THREE.Object3D {
         meshGuante.position.y = -brazoInfLength - 0.5; // al final del brazo inferior
         meshGuante.position.x = 0.5;
         meshGuante.rotation.x = Math.PI; // <-- Gira el guante 180 grados para que mire hacia abajo
+        
+        this.colorOriginal = material.color.getHex();
 
         // --- Montar jerarquía ---
         pivoteCodo.add(codoMesh);
@@ -114,8 +118,8 @@ class Guan_R extends THREE.Object3D {
         pivoteHombro.add(pivoteCodo);
 
         // --- Ejes visuales ---
-        pivoteHombro.add(new THREE.AxesHelper(2)); // hombro
-        pivoteCodo.add(new THREE.AxesHelper(1.5)); // codo
+        /* pivoteHombro.add(new THREE.AxesHelper(2)); // hombro
+        pivoteCodo.add(new THREE.AxesHelper(1.5)); // codo */
 
         // --- Añadir a la escena ---
         this.add(pivoteHombro);
@@ -126,6 +130,10 @@ class Guan_R extends THREE.Object3D {
         this.brazoSupMesh = brazoSupMesh;
         this.brazoInfMesh = brazoInfMesh;
         this.meshGuante = meshGuante;
+    }
+
+    repaint(){
+        this.meshGuante.material.color.set(this.colorOriginal);
     }
 }
 
