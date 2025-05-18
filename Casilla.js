@@ -23,7 +23,6 @@ class Casilla extends THREE.Object3D{
 
             if (esCaptura) {
                 let offset = 1;
-                let baseY = -0.5;
                 let baseX = tablero.position.x;
                 let baseZ = tablero.position.z;
 
@@ -32,9 +31,9 @@ class Casilla extends THREE.Object3D{
                     let col = scene.capturadasBlancas % 8;
                     let y = (fila === 0) ? -0.5 : 0; // Primera fila a -0.5, segunda a 0
                     this.pieza.position.set(
-                        baseX + 7 - col * offset - fila,
+                        baseX + 7 - col * offset,
                         y,
-                        baseZ + 8 + 1 + fila
+                        baseZ + 8 + 1.25 + fila
                     );
                     this.pieza.rotation.y = THREE.MathUtils.degToRad(90);
                     scene.capturadasBlancas++;
@@ -43,13 +42,14 @@ class Casilla extends THREE.Object3D{
                     let col = scene.capturadasNegras % 8;
                     let y = (fila === 0) ? -0.5 : 0; // Primera fila a -0.5, segunda a 0
                     this.pieza.position.set(
-                        baseX + col * offset + fila,
+                        baseX + col * offset,
                         y,
-                        baseZ - 2 - fila
+                        baseZ - 2.25 - fila
                     );
                     this.pieza.rotation.y = THREE.MathUtils.degToRad(90);
                     scene.capturadasNegras++;
                 }
+                this.pieza.userData.capturada = true;
                 this.remove(this.pieza);
                 scene.add(this.pieza);
             } else {

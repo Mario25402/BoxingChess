@@ -111,6 +111,12 @@ class MyScene extends THREE.Scene {
 		const objetosDetectables = [];
 		this.traverse((child) => {
 			if (child.isMesh) {
+				// Si es una pieza y está capturada, no la añadas
+				let piezaPadre = child;
+				while (piezaPadre && !(piezaPadre instanceof Pieza)) {
+					piezaPadre = piezaPadre.parent;
+				}
+				if (piezaPadre && piezaPadre.userData.capturada) return;
 				objetosDetectables.push(child);
 			}
 		});

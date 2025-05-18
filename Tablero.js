@@ -188,15 +188,15 @@ class Tablero extends THREE.Object3D {
         let matR = new THREE.MeshStandardMaterial({ color: 0xFF0000, metalness: 0.8, roughness: 0.2 });
         let matA = new THREE.MeshStandardMaterial({ color: 0x0000FF, metalness: 0.8, roughness: 0.2 });
 
-        let gradaG = new THREE.BoxGeometry(8.5, 0.5, 2);
+        let gradaG = new THREE.BoxGeometry(8.5, 0.5, 1.65);
         gradaG.translate(3.5, -0.75, -2.25);
-        let gradaAGeo = new THREE.BoxGeometry(8.5, 1, 2);
-        gradaAGeo.translate(3.5, -0.5, -3.75);
+        let gradaAGeo = new THREE.BoxGeometry(8.5, 1, 1.5);
+        gradaAGeo.translate(3.5, -0.5, -3.5);
 
-        let gradaG2 = new THREE.BoxGeometry(8.5, 0.5, 2);
+        let gradaG2 = new THREE.BoxGeometry(8.5, 0.5, 1.65);
         gradaG2.translate(3.5, -0.75, 9.25);
-        let gradaAGeo2 = new THREE.BoxGeometry(8.5, 1, 2);
-        gradaAGeo2.translate(3.5, -0.5, 10.75);
+        let gradaAGeo2 = new THREE.BoxGeometry(8.5, 1, 1.5);
+        gradaAGeo2.translate(3.5, -0.5, 10.5);
 
         // Unir solo las gradas con CSG
         let brush1 = new CSG.Brush(gradaG, matR);
@@ -208,10 +208,14 @@ class Tablero extends THREE.Object3D {
         let gradasR = evaluador.evaluate(brush1, brush2, CSG.ADDITION);
         let gradasA = evaluador.evaluate(brush3, brush4, CSG.ADDITION);
 
+        gradasA.castShadow = true;
+        gradasA.receiveShadow = true;
+
+        gradasR.castShadow = true;
+        gradasR.receiveShadow = true;
+        
         this.add(gradasR);
         this.add(gradasA);
-        
-
     }
 
     getCasillasLibres(isBlanca) {
