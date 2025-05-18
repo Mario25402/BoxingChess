@@ -16,9 +16,45 @@ class Casilla extends THREE.Object3D{
         this.add(this.mesh)
     }
 
-    quitarPieza(){
+    quitarPieza(esCaptura = false){
         if (this.pieza != null){
-            this.remove(this.pieza);
+            const tablero = this.parent;
+            const scene = tablero.parent;
+
+            if (esCaptura) {
+                let offset = 1;
+                let baseY = -0.5;
+                let baseX = tablero.position.x;
+                let baseZ = tablero.position.z;
+
+               if (this.pieza.isBlanca) {
+                    let fila = Math.floor(scene.capturadasBlancas / 8);
+                    let col = scene.capturadasBlancas % 8;
+                    let y = (fila === 0) ? -0.5 : 0; // Primera fila a -0.5, segunda a 0
+                    this.pieza.position.set(
+                        baseX + 7 - col * offset - fila,
+                        y,
+                        baseZ + 8 + 1 + fila
+                    );
+                    this.pieza.rotation.y = THREE.MathUtils.degToRad(90);
+                    scene.capturadasBlancas++;
+                } else {
+                    let fila = Math.floor(scene.capturadasNegras / 8);
+                    let col = scene.capturadasNegras % 8;
+                    let y = (fila === 0) ? -0.5 : 0; // Primera fila a -0.5, segunda a 0
+                    this.pieza.position.set(
+                        baseX + col * offset + fila,
+                        y,
+                        baseZ - 2 - fila
+                    );
+                    this.pieza.rotation.y = THREE.MathUtils.degToRad(90);
+                    scene.capturadasNegras++;
+                }
+                this.remove(this.pieza);
+                scene.add(this.pieza);
+            } else {
+                this.remove(this.pieza);
+            }
             this.pieza = null;
         }
     }

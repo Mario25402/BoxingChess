@@ -115,16 +115,6 @@ class Reina extends THREE.Object3D {
 		const meshReina = new THREE.Mesh(geomReina, material);
 		this.add(meshReina);
 
-		/* // Guantes
-		const guantes = new Guante(isBlanca, DETAIL_LEVEL);
-		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
-		guantes.guante.position.set(-3.5, 3, 0)
-		guantes.guante2.position.set(3.5, 3, 0) 
-		const axesHelper = new THREE.AxesHelper(10); // El tamaño puede variar
-		guantes.guante.add(axesHelper);
-		
-		this.add(guantes); */
-
 		// --- NUEVOS BRAZOS ARTICULADOS ---
         const brazoIzq = new Guan_R(isBlanca, DETAIL_LEVEL);
         const brazoDer = new Guan_R(isBlanca, DETAIL_LEVEL);

@@ -93,57 +93,62 @@ class Pieza extends THREE.Object3D{
 
     movimientoNormal(scene, nueva) {
         const nuevaPos = new THREE.Vector3(nueva.posI, 0, nueva.posJ);
-        
+
         // Fase 1: Levantar la pieza
         const levantar = new TWEEN.Tween(this.position)
-            .to({ y: 1 }, 300) // Elevar la pieza 1 unidad en el eje Y
+            .to({ y: 1 }, 300)
             .easing(TWEEN.Easing.Quadratic.Out);
-    
+
         // Fase 2: Mover la pieza en línea recta
         const mover = new TWEEN.Tween(this.position)
             .to({ x: nuevaPos.x, z: nuevaPos.z }, 700)
             .easing(TWEEN.Easing.Quadratic.InOut);
-    
+
         // Fase 3: Bajar la pieza
         const bajar = new TWEEN.Tween(this.position)
-            .to({ y: 0 }, 300) // Bajar la pieza al tablero
+            .to({ y: 0 }, 300)
             .easing(TWEEN.Easing.Quadratic.In);
-    
+
         // Encadenar las fases
         levantar.chain(mover);
         mover.chain(bajar);
-    
+
         // Al finalizar la animación, actualizar referencias y restaurar el color
         bajar.onComplete(() => {
-            // Quitar la pieza de la casilla actual
+            // --- Si hay pieza enemiga en la casilla destino, captúrala ---
+            if (nueva.pieza && nueva.pieza.isBlanca !== this.isBlanca) {
+                nueva.quitarPieza(true); // Es captura
+            }
+
+            // Quitar la pieza de la casilla actual (no es captura)
             if (this.parent instanceof Casilla) {
                 this.parent.quitarPieza();
             }
-    
+
             // Mover la pieza a la nueva casilla
             nueva.ponerPieza(this);
-    
+
             // Actualizar la posición actual de la pieza
             this.casillaActual = [nueva.posI, nueva.posJ];
-    
+
             // Restaurar el color original de la pieza
             this.traverse((child) => {
                 if (child.isMesh && child.material && child.material.color) {
                     child.material.color.set(this.colorOriginal);
                 }
             });
-    
+
             // Deseleccionar la pieza
             if (scene && scene.selectedPiece === this) {
                 scene.selectedPiece = null;
             }
-    
+
             // Restaurar los colores del tablero
             if (scene && scene.children[14]) {
                 scene.children[14].repaint();
             }
         });
-    
+
         // Iniciar la animación
         levantar.start();
     }
@@ -183,12 +188,11 @@ class Pieza extends THREE.Object3D{
             .to({ x: scene.oponente.position.x + direccion, y: 2, z: scene.oponente.position.z + direccion }, 500)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onComplete(() => {
-                if (scene.oponente.parent instanceof Casilla) {
-                    scene.oponente.parent.quitarPieza();
-                }
-                scene.remove(scene.oponente);
-                scene.oponente = null; // Limpiar la referencia
-            });
+    if (scene.oponente.parent instanceof Casilla) {
+        scene.oponente.parent.quitarPieza(true); // Es captura
+    }
+    scene.oponente = null; // Limpiar la referencia
+});
 
         const mover = new TWEEN.Tween(this.position)
             .to({ x: nuevaPosPelea.x + acercamiento, z: nuevaPosPelea.z }, 700)

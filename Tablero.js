@@ -16,6 +16,7 @@ class Tablero extends THREE.Object3D {
         this.relllenarTablero(i, j);
         this.rellenarPiezas();
         this.crearRing();
+        this.crearGradas();
     }
 
     relllenarTablero(i, j) {
@@ -181,6 +182,36 @@ class Tablero extends THREE.Object3D {
             }
         });
         this.add(ringFinal);
+    }
+
+    crearGradas(){
+        let matR = new THREE.MeshStandardMaterial({ color: 0xFF0000, metalness: 0.8, roughness: 0.2 });
+        let matA = new THREE.MeshStandardMaterial({ color: 0x0000FF, metalness: 0.8, roughness: 0.2 });
+
+        let gradaG = new THREE.BoxGeometry(8.5, 0.5, 2);
+        gradaG.translate(3.5, -0.75, -2.25);
+        let gradaAGeo = new THREE.BoxGeometry(8.5, 1, 2);
+        gradaAGeo.translate(3.5, -0.5, -3.75);
+
+        let gradaG2 = new THREE.BoxGeometry(8.5, 0.5, 2);
+        gradaG2.translate(3.5, -0.75, 9.25);
+        let gradaAGeo2 = new THREE.BoxGeometry(8.5, 1, 2);
+        gradaAGeo2.translate(3.5, -0.5, 10.75);
+
+        // Unir solo las gradas con CSG
+        let brush1 = new CSG.Brush(gradaG, matR);
+        let brush2 = new CSG.Brush(gradaAGeo, matR);
+        let brush3 = new CSG.Brush(gradaG2, matA);
+        let brush4 = new CSG.Brush(gradaAGeo2, matA);
+
+        const evaluador = new CSG.Evaluator();
+        let gradasR = evaluador.evaluate(brush1, brush2, CSG.ADDITION);
+        let gradasA = evaluador.evaluate(brush3, brush4, CSG.ADDITION);
+
+        this.add(gradasR);
+        this.add(gradasA);
+        
+
     }
 
     getCasillasLibres(isBlanca) {

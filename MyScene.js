@@ -28,6 +28,9 @@ class MyScene extends THREE.Scene {
 
 		this.golpeCameraMode = "ninguna"; // Inicializa la cámara de golpe en modo "ninguna"
 
+		this.capturadasBlancas = 0;
+		this.capturadasNegras = 0;
+
 		// Se añade a la gui los controles para manipular los elementos de esta clase
 		this.gui = this.createGUI();
 
