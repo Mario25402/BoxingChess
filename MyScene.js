@@ -233,9 +233,6 @@ class MyScene extends THREE.Scene {
 	
 					// Cambiar el turno al otro equipo
 					this.turnoBlancas = !this.turnoBlancas;
-	
-					// Actualizar la cámara activa
-					this.updateCamera();
 				} 
 			} 
 		} 

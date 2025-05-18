@@ -146,6 +146,10 @@ class Pieza extends THREE.Object3D{
             // Restaurar los colores del tablero
             if (scene && scene.children[14]) {
                 scene.children[14].repaint();
+                // Actualizar la cámara activa
+				setTimeout(() => {
+                    scene.updateCamera();
+                }, 100);
             }
         });
 
