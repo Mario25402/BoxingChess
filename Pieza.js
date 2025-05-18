@@ -65,6 +65,13 @@ class Pieza extends THREE.Object3D{
                 child.receiveShadow = true;
             }
         });
+
+        this.traverse((child) => {
+            if (child.isMesh && child.material && child.material.color) {
+                // Guarda el color original de cada mesh
+                child.userData.colorOriginal = child.material.color.clone();
+            }
+        });
     }
 
     getPosiblesMovimientos(casillasLibres, casillasOcupadas) {
@@ -133,8 +140,8 @@ class Pieza extends THREE.Object3D{
 
             // Restaurar el color original de la pieza
             this.traverse((child) => {
-                if (child.isMesh && child.material && child.material.color) {
-                    child.material.color.set(this.colorOriginal);
+                if (child.isMesh && child.material && child.material.color && child.userData.colorOriginal) {
+                    child.material.color.copy(child.userData.colorOriginal);
                 }
             });
 
@@ -271,8 +278,8 @@ class Pieza extends THREE.Object3D{
 
             // Restaurar el color original de la pieza
             this.traverse((child) => {
-                if (child.isMesh && child.material && child.material.color) {
-                    child.material.color.set(this.colorOriginal);
+                if (child.isMesh && child.material && child.material.color && child.userData.colorOriginal) {
+                    child.material.color.copy(child.userData.colorOriginal);
                 }
             });
 
