@@ -64,7 +64,7 @@ class MyScene extends THREE.Scene {
 		// Todas las unidades están en metros
 		this.axis = new THREE.AxesHelper(2);
 		this.add(this.axis);
-		
+
 		// Y un tablero
 		let tablero = new Tablero(8, 8);
 		tablero.position.set(-3.5, 0, -3.5);
@@ -97,16 +97,16 @@ class MyScene extends THREE.Scene {
 				child.material.color.set(this.selectedPiece.originalColor);
 			}
 		});
-		
+
 		this.selectedPiece = null; // Deseleccionar la pieza
 	}
 
 	onMouseClick(event) {
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
-	
+
 		this.raycaster.setFromCamera(this.mouse, this.activeCamera);
-	
+
 		// Recopilar todos los objetos detectables (incluyendo los hijos del Tablero)
 		const objetosDetectables = [];
 		this.traverse((child) => {
@@ -120,34 +120,34 @@ class MyScene extends THREE.Scene {
 				objetosDetectables.push(child);
 			}
 		});
-	
+
 		const intersects = this.raycaster.intersectObjects(objetosDetectables, true);
-	
+
 		if (intersects.length > 0) {
 			const pickedObject = intersects[0].object;
-	
+
 			// Verificar si el objeto pertenece a una pieza
 			let currentObject = pickedObject;
 			while (currentObject && !(currentObject instanceof Pieza)) {
 				currentObject = currentObject.parent;
 			}
-	
+
 			if (currentObject instanceof Pieza) {
 				// Verificar si la pieza pertenece al equipo del turno actual
 				if (currentObject.isBlanca !== this.turnoBlancas) {
 					console.log("No es el turno de este equipo.");
 					return;
 				}
-	
+
 				// Restaurar el color de la pieza previamente seleccionada
 				if (this.selectedPiece) {
 					this.terminarMovimiento();
 				}
-	
+
 				// Guardar la pieza seleccionada
 				this.selectedPiece = currentObject;
 				this.selectedPiece.originalColor = null;
-	
+
 				// Cambiar el color de la nueva pieza seleccionada
 				this.selectedPiece.traverse((child) => {
 					if (child.isMesh && child.material && child.material.color) {
@@ -161,7 +161,7 @@ class MyScene extends THREE.Scene {
 							child.material.color.set(0xff0000);
 						}
 					}
-	
+
 					// Restaurar el color de las casillas
 					this.children[14].repaint();
 				});
@@ -171,12 +171,12 @@ class MyScene extends THREE.Scene {
 			if (this.selectedPiece) {
 				// Restaurar el color de la pieza seleccionada
 				this.terminarMovimiento();
-	
+
 				// Restaurar el color de las casillas
 				this.children[14].repaint();
 			}
 		}
-	
+
 		// Mostrar posibles movimientos de la pieza seleccionada
 		if (this.selectedPiece) {
 			this.movimientosVerdes = this.children[14].getPosiblesMovimientos(this.selectedPiece);
@@ -186,9 +186,9 @@ class MyScene extends THREE.Scene {
 	onRightClick(event) {
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
-	
+
 		this.raycaster.setFromCamera(this.mouse, this.activeCamera);
-	
+
 		// Recopilar todas las casillas del tablero
 		const casillas = [];
 		this.traverse((child) => {
@@ -196,25 +196,25 @@ class MyScene extends THREE.Scene {
 				casillas.push(child);
 			}
 		});
-	
+
 		// Detectar intersecciones con las casillas
 		const intersects = this.raycaster.intersectObjects(casillas, true);
-	
+
 		if (intersects.length > 0) {
 			const pickedObject = intersects[0].object;
-	
+
 			// Si es una pieza, escoger su casilla
 			let currentCasilla = pickedObject;
 			while (currentCasilla && !(currentCasilla instanceof Casilla)) {
 				currentCasilla = currentCasilla.parent;
 			}
-	
+
 			if (currentCasilla instanceof Casilla) {
 				// Verificar si la casilla está en los movimientos verdes
 				const esCasillaValida = this.movimientosVerdes.some(
 					(casilla) => casilla[0] === currentCasilla.posI && casilla[1] === currentCasilla.posJ
 				);
-	
+
 				if (esCasillaValida) {
 					// Verificar si hay una pieza que se va a comer
 					if (currentCasilla.pieza && (currentCasilla.pieza.isBlanca !== this.turnoBlancas)) {
@@ -226,16 +226,16 @@ class MyScene extends THREE.Scene {
 					// Colorear la casilla seleccionada y mover la pieza
 					currentCasilla.setColorMov();
 					this.selectedPiece.moveTo(currentCasilla, this);
-	
+
 					// Deseleccionar pieza y limpiar sus movimientos
 					this.terminarMovimiento();
 					this.movimientosVerdes = [];
-	
+
 					// Cambiar el turno al otro equipo
 					this.turnoBlancas = !this.turnoBlancas;
-				} 
-			} 
-		} 
+				}
+			}
+		}
 	}
 
 	createCameras() {
@@ -254,8 +254,8 @@ class MyScene extends THREE.Scene {
 
 		this.cameraBlancas = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
 		this.cameraBlancas.position.set(-12, 8, 0); // Misma posición pero 	con x negativa
-    	this.cameraBlancas.lookAt(new THREE.Vector3(0, 0, 0));
-    	this.add(this.cameraBlancas);
+		this.cameraBlancas.lookAt(new THREE.Vector3(0, 0, 0));
+		this.add(this.cameraBlancas);
 
 		// Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
 		this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
@@ -334,9 +334,9 @@ class MyScene extends THREE.Scene {
 		// La luz ambiental solo tiene un color y una intensidad
 		// Se declara como   var   y va a ser una variable local a este método
 		//    se hace así puesto que no va a ser accedida desde otros métodos
-		
+
 		//this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
-		
+
 		this.ambientLight = new THREE.AmbientLight('white', 0.5);
 
 		// La añadimos a la escena
@@ -353,7 +353,7 @@ class MyScene extends THREE.Scene {
 		this.add(this.pointLight); */
 
 		this.directinalLight = new THREE.DirectionalLight(0xffffff, 1.25);
-		this.directinalLight.position.set(-(3.5 - 4.125+ 3) , 3, 0);
+		this.directinalLight.position.set(-(3.5 - 4.125 + 3), 3, 0);
 		this.add(this.directinalLight);
 
 		this.directinalLight.target.position.set(3.5 - 4.125, 0, 0);
@@ -417,7 +417,7 @@ class MyScene extends THREE.Scene {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		renderer.shadowMap.enabled = true;
-    	renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Mejor calidad
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Mejor calidad
 
 		// La visualización se muestra en el lienzo recibido
 		$(myCanvas).append(renderer.domElement);

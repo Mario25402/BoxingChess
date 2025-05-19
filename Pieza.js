@@ -10,8 +10,8 @@ import { Peon } from './Peon.js'
 import { Caballo } from './Caballo.js'
 import { Reina } from './Reina.js'
 
-class Pieza extends THREE.Object3D{
-    constructor(ficha, casillaActual, isBlanca, DETAIL_LEVEL){
+class Pieza extends THREE.Object3D {
+    constructor(ficha, casillaActual, isBlanca, DETAIL_LEVEL) {
         super();
 
         this.casillaActual = casillaActual
@@ -19,8 +19,8 @@ class Pieza extends THREE.Object3D{
         this.isBlanca = isBlanca
         this.ficha = ficha;
 
-        if (isBlanca) this.colorOriginal = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-        else this.colorOriginal = new THREE.MeshStandardMaterial({color: 0x222222});
+        if (isBlanca) this.colorOriginal = new THREE.MeshStandardMaterial({ color: 0xFBDBB5 });
+        else this.colorOriginal = new THREE.MeshStandardMaterial({ color: 0x222222 });
 
         switch (ficha) {
             case "Rey":
@@ -32,7 +32,7 @@ class Pieza extends THREE.Object3D{
                 this.pieza = new Reina(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
-            
+
             case "Caballo":
                 this.pieza = new Caballo(isBlanca, DETAIL_LEVEL);
                 this.pieza.rotateY(THREE.MathUtils.degToRad(180));
@@ -48,7 +48,7 @@ class Pieza extends THREE.Object3D{
                 this.pieza = new Alfil(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.11, 0.11, 0.11)
                 break;
-            
+
             case "Peon":
                 this.pieza = new Peon(isBlanca, DETAIL_LEVEL);
                 this.pieza.scale.set(0.3, 0.3, 0.3)
@@ -77,7 +77,7 @@ class Pieza extends THREE.Object3D{
     getPosiblesMovimientos(casillasLibres, casillasOcupadas) {
         let movimientos = this.pieza.getMovimientos(this.casillaActual, casillasOcupadas);
         let posiblesMovimientos = [];
-    
+
         // Filtrar los movimientos posibles (solo casillas libres o con piezas enemigas)
         for (let i = 0; i < movimientos.length; i++) {
             for (let j = 0; j < casillasLibres.length; j++) {
@@ -86,13 +86,12 @@ class Pieza extends THREE.Object3D{
                 }
             }
         }
-    
+
         return posiblesMovimientos;
     }
 
     moveTo(nueva, scene) {
-        if (scene.selectedPiece.ficha == "Reina" 
-        && (scene.oponente && scene.oponente.ficha == "Peon"))
+        if (scene.selectedPiece.ficha == "Reina" && scene.oponente)
             this.movimientoGolpe(scene, nueva);
 
         else this.movimientoNormal(scene, nueva)
@@ -154,7 +153,7 @@ class Pieza extends THREE.Object3D{
             if (scene && scene.children[14]) {
                 scene.children[14].repaint();
                 // Actualizar la cámara activa
-				setTimeout(() => {
+                setTimeout(() => {
                     scene.updateCamera();
                 }, 100);
             }
@@ -164,7 +163,7 @@ class Pieza extends THREE.Object3D{
         levantar.start();
     }
 
-    movimientoGolpe(scene, nueva){
+    movimientoGolpe(scene, nueva) {
         // Guardar la posición de la casilla del oponente antes de eliminarlo
         const oponenteCasillaPos = [
             scene.oponente.parent.posI,
@@ -174,7 +173,7 @@ class Pieza extends THREE.Object3D{
         let acercamiento = -0.6;
         let direccion = -9;
 
-        if (this.isBlanca){
+        if (this.isBlanca) {
             acercamiento = 0.6
             direccion = 9;
         }
@@ -199,11 +198,11 @@ class Pieza extends THREE.Object3D{
             .to({ x: scene.oponente.position.x + direccion, y: 2, z: scene.oponente.position.z + direccion }, 500)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onComplete(() => {
-    if (scene.oponente.parent instanceof Casilla) {
-        scene.oponente.parent.quitarPieza(true); // Es captura
-    }
-    scene.oponente = null; // Limpiar la referencia
-});
+                if (scene.oponente.parent instanceof Casilla) {
+                    scene.oponente.parent.quitarPieza(true); // Es captura
+                }
+                scene.oponente = null; // Limpiar la referencia
+            });
 
         const mover = new TWEEN.Tween(this.position)
             .to({ x: nuevaPosPelea.x + acercamiento, z: nuevaPosPelea.z }, 700)
@@ -223,42 +222,38 @@ class Pieza extends THREE.Object3D{
 
                 let camPos;
 
-            if (scene.golpeCameraMode === "primeraPersona") {
-                // PRIMERA PERSONA
-                const alturaOjos = 1;
-                camPos = origen.clone();
-                camPos.y += alturaOjos;
-                const alturaPeon = 0.5;
-                objetivo.y += alturaPeon;
-                const direccion = objetivo.clone().sub(origen).normalize();
-                camPos.add(direccion.clone().multiplyScalar(0.2));
-                scene.golpeCamera.position.copy(camPos);
-                scene.golpeCamera.lookAt(objetivo);
-                scene.activeCamera = scene.golpeCamera;
-            } else if (scene.golpeCameraMode === "lateral") {
-                // LATERAL
-                const direccion = objetivo.clone().sub(origen).normalize();
-                const lateral = new THREE.Vector3(-direccion.z, 0, direccion.x).normalize();
-                const distancia = 3;
-                const altura = 3;
-                camPos = origen.clone().add(lateral.multiplyScalar(-distancia));
-                camPos.y += altura;
-                scene.golpeCamera.position.copy(camPos);
-                scene.golpeCamera.lookAt(objetivo);
-                scene.activeCamera = scene.golpeCamera;
-            }
-            // Si es "ninguna", NO cambies la cámara ni hagas nada
+                if (scene.golpeCameraMode === "primeraPersona") {
+                    // PRIMERA PERSONA
+                    const alturaOjos = 1;
+                    camPos = origen.clone();
+                    camPos.y += alturaOjos;
+                    const alturaPeon = 0.5;
+                    objetivo.y += alturaPeon;
+                    const direccion = objetivo.clone().sub(origen).normalize();
+                    camPos.add(direccion.clone().multiplyScalar(0.2));
+                    scene.golpeCamera.position.copy(camPos);
+                    scene.golpeCamera.lookAt(objetivo);
+                    scene.activeCamera = scene.golpeCamera;
+                } else if (scene.golpeCameraMode === "lateral") {
+                    // LATERAL
+                    const direccion = objetivo.clone().sub(origen).normalize();
+                    const lateral = new THREE.Vector3(-direccion.z, 0, direccion.x).normalize();
+                    const distancia = 3;
+                    const altura = 3;
+                    camPos = origen.clone().add(lateral.multiplyScalar(-distancia));
+                    camPos.y += altura;
+                    scene.golpeCamera.position.copy(camPos);
+                    scene.golpeCamera.lookAt(objetivo);
+                    scene.activeCamera = scene.golpeCamera;
+                }
+                // Si es "ninguna", NO cambies la cámara ni hagas nada
 
-            this.pieza.animarGolpe(() => {
-                lanzar.start();
-                setTimeout(() => {
-                    if (this.isBlanca) {
-                        scene.activeCamera = scene.camera;
-                    } else {
-                        scene.activeCamera = scene.cameraBlancas;
-                    }
-                }, 550);
-            });
+                this.pieza.animarGolpe(() => {
+                    lanzar.start();
+                    setTimeout(() => {
+                        scene.updateCamera()
+                    }, 550);
+                });
             } else {
                 lanzar.start();
             }
