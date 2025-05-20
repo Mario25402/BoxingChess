@@ -15,14 +15,15 @@ class Rey extends THREE.Object3D {
 		const loader = new THREE.TextureLoader();
 		const bumpTexture = loader.load('./imgs/pie.png');
 
-
 		if (isBlanca) {
 			material = new THREE.MeshStandardMaterial({
 				color: 0xFBDBB5,
 				bumpMap: bumpTexture,
 				bumpScale: 1,
 			});
-		} else {
+		}
+
+		else {
 			material = new THREE.MeshStandardMaterial({
 				color: 0x222222,
 				bumpMap: bumpTexture,
@@ -105,7 +106,7 @@ class Rey extends THREE.Object3D {
 		rey = evaluador.evaluate(rey, cruz, CSG.ADDITION);
 
 		// Convertir el resultado de CSG a THREE.Mesh para poder cambiar el color
-		const geomRey = rey.geometry; 
+		const geomRey = rey.geometry;
 		geomRey.rotateY(MathUtils.degToRad(90));
 		const meshRey = new THREE.Mesh(geomRey, material);
 		this.add(meshRey);
@@ -122,7 +123,7 @@ class Rey extends THREE.Object3D {
 	getMovimientos(casillaActual, casillasOcupadas) {
 		const [x, y] = casillaActual;
 		const movimientos = [];
-	
+
 		// Posibles movimientos del Rey (una casilla en cualquier dirección)
 		const posiblesMovimientos = [
 			[x + 1, y],     // Derecha
@@ -134,19 +135,18 @@ class Rey extends THREE.Object3D {
 			[x + 1, y - 1], // Diagonal abajo-derecha
 			[x - 1, y - 1]  // Diagonal abajo-izquierda
 		];
-	
+
 		for (const [nx, ny] of posiblesMovimientos) {
 			// Verificar que el movimiento esté dentro del tablero
 			if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
 				// Verificar si la casilla está ocupada
-				if (!casillasOcupadas.some(([ox, oy]) => ox === nx && oy === ny)) {
+				if (!casillasOcupadas.some(([ox, oy]) => ox === nx && oy === ny))
 					movimientos.push([nx, ny]); // Casilla libre
-				} else {
-					movimientos.push([nx, ny]); // Puede capturar la pieza enemiga
-				}
+
+				else movimientos.push([nx, ny]); // Puede capturar la pieza enemiga
 			}
 		}
-	
+
 		return movimientos;
 	}
 }

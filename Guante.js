@@ -8,17 +8,15 @@ class Guante extends THREE.Object3D {
 
         let material, material2;
         const evaluador = new CSG.Evaluator();
-        const matRojo = new THREE.MeshStandardMaterial({color: 0xFF0000});
 
-        if (isBlanca){
-            //Rojo
-            material = new THREE.MeshStandardMaterial({color: 0xFF0000});
-            material2 = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
+        if (isBlanca) {
+            material = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+            material2 = new THREE.MeshStandardMaterial({ color: 0xFBDBB5 });
         }
-        else{
-            //Azul
-            material = new THREE.MeshStandardMaterial({color: 0x0000FF});
-            material2 = new THREE.MeshStandardMaterial({color: 0x222222})
+
+        else {
+            material = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+            material2 = new THREE.MeshStandardMaterial({ color: 0x222222 })
         }
 
         // Puño
@@ -51,7 +49,6 @@ class Guante extends THREE.Object3D {
         };
         var geometry = new THREE.ExtrudeGeometry(this.shape, options);
 
-
         this.cilGeo = new THREE.CylinderGeometry(1.05, 1.2, 0.95, DETAIL_LEVEL);
         this.cilGeo.translate(-0.65, -0.4, 0.25);
         this.cilGeo.scale(0.7, 1, 1);
@@ -62,12 +59,12 @@ class Guante extends THREE.Object3D {
         this.cilBrush = new CSG.Brush(this.cilGeo, material);
 
         // Brazos
-		const brazoInf = new THREE.CylinderGeometry(0.3, 0.3, 3, 3);
-		brazoInf.translate(-0.5, -2.2, 0.2);
+        const brazoInf = new THREE.CylinderGeometry(0.3, 0.3, 3, 3);
+        brazoInf.translate(-0.5, -2.2, 0.2);
         const brazoInfBrush = new CSG.Brush(brazoInf, material2);
 
-		const codo = new THREE.SphereGeometry(0.5, DETAIL_LEVEL, DETAIL_LEVEL);
-		codo.translate(-0.5, -3.8, 0.2);
+        const codo = new THREE.SphereGeometry(0.5, DETAIL_LEVEL, DETAIL_LEVEL);
+        codo.translate(-0.5, -3.8, 0.2);
         const codoBrush = new CSG.Brush(codo, material2);
 
         const brazoSup = new THREE.CylinderGeometry(0.3, 0.3, 5, 3);
@@ -77,7 +74,7 @@ class Guante extends THREE.Object3D {
 
         // Unión
         this.dedo = evaluador.evaluate(this.cilinBrush, this.esferaBrush, CSG.ADDITION);
-     
+
         this.dedo.geometry.scale(1, 1, 0.75);
         this.dedo.geometry.rotateX(THREE.MathUtils.degToRad(22));
         this.dedo.geometry.rotateZ(THREE.MathUtils.degToRad(-20));
@@ -90,7 +87,7 @@ class Guante extends THREE.Object3D {
         this.guante = evaluador.evaluate(this.guante, brazoInfBrush, CSG.ADDITION);
         this.guante = evaluador.evaluate(this.guante, codoBrush, CSG.ADDITION);
         this.guante = evaluador.evaluate(this.guante, brazoSupBrush, CSG.ADDITION);
-        
+
         // Brazo 2
         this.guante2 = this.guante.clone();
         this.guante2.translateZ(1);

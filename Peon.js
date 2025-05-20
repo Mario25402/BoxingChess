@@ -14,7 +14,6 @@ class Peon extends THREE.Object3D {
 		const loader = new THREE.TextureLoader();
 		const bumpTexture = loader.load('./imgs/pie.png');
 
-
 		if (isBlanca) {
 			material = new THREE.MeshStandardMaterial({
 				color: 0xFBDBB5,
@@ -51,8 +50,6 @@ class Peon extends THREE.Object3D {
 
 		// Unión
 		this.peon = evaluador.evaluate(this.shapeBrush, this.esferaBrush, CSG.ADDITION);
-		//this.add(this.peon);
-
 		const geomPeon = this.peon.geometry
 		const meshPeon = new THREE.Mesh(geomPeon, material);
 		this.add(meshPeon);
@@ -63,7 +60,7 @@ class Peon extends THREE.Object3D {
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.guante.position.set(-3.2, 1.62, 0);
 		guantes.guante2.position.set(3.2, 1.62, 0);
-		
+
 		this.add(guantes);
 	}
 
@@ -71,15 +68,15 @@ class Peon extends THREE.Object3D {
 		const [x, y] = casillaActual; // x = fila (avance), y = columna (horizontal)
 		const movimientos = [];
 		const direccion = this.isBlanca ? 1 : -1; // Blancas suben (x+1), negras bajan (x-1)
-	
+
 		const dentroDelTablero = (x, y) => x >= 0 && x < 8 && y >= 0 && y < 8;
 		const estaOcupada = (x, y) => casillasOcupadas.some(([ox, oy]) => ox === x && oy === y);
-	
+
 		// Movimiento hacia adelante (una casilla)
 		const x1 = x + direccion;
 		if (dentroDelTablero(x1, y) && !estaOcupada(x1, y)) {
 			movimientos.push([x1, y]);
-	
+
 			// Movimiento doble desde la fila inicial
 			const x2 = x + 2 * direccion;
 			const esPrimerMovimiento = (this.isBlanca && x === 1) || (!this.isBlanca && x === 6);
@@ -87,7 +84,7 @@ class Peon extends THREE.Object3D {
 				movimientos.push([x2, y]);
 			}
 		}
-	
+
 		// Capturas en diagonal
 		for (let dy of [-1, 1]) {
 			const cx = x + direccion;
@@ -96,11 +93,9 @@ class Peon extends THREE.Object3D {
 				movimientos.push([cx, cy]);
 			}
 		}
-	
+
 		return movimientos;
 	}
-	
-
 }
 
 export { Peon };

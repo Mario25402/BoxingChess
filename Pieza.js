@@ -66,9 +66,9 @@ class Pieza extends THREE.Object3D {
             }
         });
 
+        // Guarda el color original de cada mesh
         this.traverse((child) => {
             if (child.isMesh && child.material && child.material.color) {
-                // Guarda el color original de cada mesh
                 child.userData.colorOriginal = child.material.color.clone();
             }
         });
@@ -119,17 +119,14 @@ class Pieza extends THREE.Object3D {
         levantar.chain(mover);
         mover.chain(bajar);
 
-        // Al finalizar la animación, actualizar referencias y restaurar el color
         bajar.onComplete(() => {
-            // --- Si hay pieza enemiga en la casilla destino, captúrala ---
-            if (nueva.pieza && nueva.pieza.isBlanca !== this.isBlanca) {
+            // Si hay pieza enemiga
+            if (nueva.pieza && nueva.pieza.isBlanca !== this.isBlanca)
                 nueva.quitarPieza(true); // Es captura
-            }
 
             // Quitar la pieza de la casilla actual (no es captura)
-            if (this.parent instanceof Casilla) {
+            if (this.parent instanceof Casilla)
                 this.parent.quitarPieza();
-            }
 
             // Mover la pieza a la nueva casilla
             nueva.ponerPieza(this);
@@ -139,23 +136,20 @@ class Pieza extends THREE.Object3D {
 
             // Restaurar el color original de la pieza
             this.traverse((child) => {
-                if (child.isMesh && child.material && child.material.color && child.userData.colorOriginal) {
+                if (child.isMesh && child.material && child.material.color && child.userData.colorOriginal)
                     child.material.color.copy(child.userData.colorOriginal);
-                }
             });
 
             // Deseleccionar la pieza
-            if (scene && scene.selectedPiece === this) {
+            if (scene && scene.selectedPiece === this)
                 scene.selectedPiece = null;
-            }
 
             // Restaurar los colores del tablero
-            if (scene && scene.children[14]) {
-                scene.children[14].repaint();
+            if (scene && scene.children[13]) {
+                scene.children[13].repaint();
+
                 // Actualizar la cámara activa
-                setTimeout(() => {
-                    scene.updateCamera();
-                }, 100);
+                setTimeout(() => { scene.updateCamera(); }, 100);
             }
         });
 
@@ -198,9 +192,9 @@ class Pieza extends THREE.Object3D {
             .to({ x: scene.oponente.position.x + direccion, y: 2, z: scene.oponente.position.z + direccion }, 500)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onComplete(() => {
-                if (scene.oponente.parent instanceof Casilla) {
+                if (scene.oponente.parent instanceof Casilla)
                     scene.oponente.parent.quitarPieza(true); // Es captura
-                }
+
                 scene.oponente = null; // Limpiar la referencia
             });
 
@@ -222,41 +216,51 @@ class Pieza extends THREE.Object3D {
 
                 let camPos;
 
+                // PRIMERA PERSONA
                 if (scene.golpeCameraMode === "primeraPersona") {
-                    // PRIMERA PERSONA
                     const alturaOjos = 1;
+                    const alturaPeon = 0.5;
+
                     camPos = origen.clone();
                     camPos.y += alturaOjos;
-                    const alturaPeon = 0.5;
                     objetivo.y += alturaPeon;
+
                     const direccion = objetivo.clone().sub(origen).normalize();
                     camPos.add(direccion.clone().multiplyScalar(0.2));
-                    scene.golpeCamera.position.copy(camPos);
-                    scene.golpeCamera.lookAt(objetivo);
-                    scene.activeCamera = scene.golpeCamera;
-                } else if (scene.golpeCameraMode === "lateral") {
-                    // LATERAL
-                    const direccion = objetivo.clone().sub(origen).normalize();
-                    const lateral = new THREE.Vector3(-direccion.z, 0, direccion.x).normalize();
-                    const distancia = 3;
-                    const altura = 3;
-                    camPos = origen.clone().add(lateral.multiplyScalar(-distancia));
-                    camPos.y += altura;
+
                     scene.golpeCamera.position.copy(camPos);
                     scene.golpeCamera.lookAt(objetivo);
                     scene.activeCamera = scene.golpeCamera;
                 }
-                // Si es "ninguna", NO cambies la cámara ni hagas nada
+
+                // LATERAL
+                else if (scene.golpeCameraMode === "lateral") {
+                    const direccion = objetivo.clone().sub(origen).normalize();
+                    const lateral = new THREE.Vector3(-direccion.z, 0, direccion.x).normalize();
+                    const distancia = 3;
+                    const altura = 3;
+
+                    camPos = origen.clone().add(lateral.multiplyScalar(-distancia));
+                    camPos.y += altura;
+
+                    scene.golpeCamera.position.copy(camPos);
+                    scene.golpeCamera.lookAt(objetivo);
+                    scene.activeCamera = scene.golpeCamera;
+                }
 
                 this.pieza.animarGolpe(() => {
                     lanzar.start();
-                    setTimeout(() => {
-                        scene.updateCamera()
-                    }, 550);
+                    setTimeout(() => { scene.updateCamera() }, 550);
                 });
-            } else {
-                lanzar.start();
+
             }
+
+            else lanzar.start();
+        });
+
+        lanzar.onComplete(() => {
+            if (scene.activeCamera === scene.golpeCamera)
+                scene.activeCamera = scene.cameraBlancas;
         });
 
         mover.onComplete(() => {
@@ -273,20 +277,17 @@ class Pieza extends THREE.Object3D {
 
             // Restaurar el color original de la pieza
             this.traverse((child) => {
-                if (child.isMesh && child.material && child.material.color && child.userData.colorOriginal) {
+                if (child.isMesh && child.material && child.material.color && child.userData.colorOriginal)
                     child.material.color.copy(child.userData.colorOriginal);
-                }
             });
 
             // Deseleccionar la pieza
-            if (scene && scene.selectedPiece === this) {
+            if (scene && scene.selectedPiece === this)
                 scene.selectedPiece = null;
-            }
 
             // Restaurar los colores del tablero
-            if (scene && scene.children[14]) {
-                scene.children[14].repaint();
-            }
+            if (scene && scene.children[13])
+                scene.children[13].repaint();
         });
 
         // Iniciar la animación

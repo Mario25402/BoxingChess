@@ -5,7 +5,7 @@ import * as CSG from '../libs/three-bvh-csg.js'
 class Tablero extends THREE.Object3D {
     DETAIL_LEVEL = 3;
 
-    constructor(i, j) {
+    constructor(i = 8, j = 8) {
         super();
 
         this.tablero = new Array(i);
@@ -28,6 +28,7 @@ class Tablero extends THREE.Object3D {
         for (let x = 0; x < i; x++) {
             for (let z = 0; z < j; z++) {
 
+                // Color de la casilla
                 let mat = matNegro2
                 if ((x + z) % 2 == 0) mat = matBlanco2;
                 let mesh = new THREE.Mesh(geom, mat);
@@ -36,6 +37,7 @@ class Tablero extends THREE.Object3D {
                 mesh.receiveShadow = true;
                 mesh.castShadow = false;
 
+                // Casilla
                 let casilla = new Casilla(mesh, x, z);
                 this.tablero[x][z] = casilla;
                 this.add(casilla)
@@ -64,10 +66,10 @@ class Tablero extends THREE.Object3D {
         this.tablero[7][6].setPieza("Caballo", false, this.DETAIL_LEVEL);
         this.tablero[7][7].setPieza("Torre", false, this.DETAIL_LEVEL);
 
-        // Peones Blancos y Negros
+        // Peónes
         for (let i = 0; i < 8; i++) {
-            this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);
-            this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL);
+            this.tablero[1][i].setPieza("Peon", true, this.DETAIL_LEVEL);  // Blancos
+            this.tablero[6][i].setPieza("Peon", false, this.DETAIL_LEVEL); // Negros
         }
     }
 
@@ -83,51 +85,48 @@ class Tablero extends THREE.Object3D {
         ringGeo.translate(3.5, -0.5, 3.5);
         const ringBrush = new CSG.Brush(ringGeo, mat);
 
+        const evaluador = new CSG.Evaluator();
         var loader2 = new THREE.TextureLoader();
         var textura = loader2.load('./imgs/box.png')
-        var mate = new THREE. MeshStandardMaterial ( {map:textura, color: 0xffffff, metalness: 0.8, roughness: 0.2} ) ;
+        var mate = new THREE.MeshStandardMaterial({ map: textura, color: 0xffffff, metalness: 0.8, roughness: 0.2 });
 
+        // Carteles
         const cartel = new THREE.BoxGeometry(0.45, 0.75, 4);
-        //const mate = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2 });
         cartel.translate(3.5 + 4.2, -0.5, 3.5);
-        const cart = new THREE.Mesh(cartel,mate);
+        const cart = new THREE.Mesh(cartel, mate);
         this.add(cart);
 
         const cartel2 = new THREE.BoxGeometry(0.45, 0.75, 4);
-        //const mate = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2 });
         cartel2.translate(3.5 - 4.2, -0.5, 3.5);
-        const cart2 = new THREE.Mesh(cartel2,mate);
+        const cart2 = new THREE.Mesh(cartel2, mate);
         this.add(cart2);
 
-
-        // Crear el hueco del ring
+        // Hueco del ring
         const huecoGeo = new THREE.BoxGeometry(8, 0.6, 8);
         huecoGeo.translate(3.5, -0.2, 3.5);
         const huecoBrush = new CSG.Brush(huecoGeo, mat);
 
-        // Evaluador CSG
-        const evaluador = new CSG.Evaluator();
-
-        // Crear el ring con el hueco
+        // Ring + Hueco
         let ringFinal = evaluador.evaluate(ringBrush, huecoBrush, CSG.SUBTRACTION);
 
-        // Crear los palos del ring
-        const paloMat1 = new THREE.MeshStandardMaterial({ 
-            color: 0xFF0000, 
-            metalness: 0.75, 
-            roughness: 0.2 
+        // Esquinas del ring
+        const paloMat1 = new THREE.MeshStandardMaterial({
+            color: 0xFF0000,
+            metalness: 0.75,
+            roughness: 0.2
         });
-        const paloMat2 = new THREE.MeshStandardMaterial({ 
-            color: 0x0000FF, 
-            metalness: 0.75, 
-            roughness: 0.2 
+
+        const paloMat2 = new THREE.MeshStandardMaterial({
+            color: 0x0000FF,
+            metalness: 0.75,
+            roughness: 0.2
         });
 
         const paloPositions = [
             [3.5 - 4.125, 0.4, 3.5 + 4.125],  // Arriba izquierda
             [3.5 - 4.125, 0.4, 3.5 - 4.125],  // Arriba derecha
             [3.5 + 4.125, 0.4, 3.5 - 4.125],  // Abajo derecha
-            [3.5 + 4.125, 0.4, 3.5 + 4.125]  // Abajo izquierda
+            [3.5 + 4.125, 0.4, 3.5 + 4.125]   // Abajo izquierda
         ];
 
         paloPositions.forEach(([x, y, z]) => {
@@ -144,12 +143,11 @@ class Tablero extends THREE.Object3D {
             ringFinal = evaluador.evaluate(ringFinal, paloBrush, CSG.ADDITION);
         });
 
-        // Crear las cuerdas del ring
+        // Cuerdas del ring
         const loader = new THREE.TextureLoader();
         const bumpTexture = loader.load('./imgs/lazo.png');
-        //const cuerdaMat = new THREE.MeshStandardMaterial({ color: 0xB7B7B7 });
         const cuerdaMat = new THREE.MeshStandardMaterial({
-            color:  0xB7B7B7,
+            color: 0xB7B7B7,
             bumpMap: bumpTexture,
             bumpScale: 1,
         });
@@ -184,7 +182,7 @@ class Tablero extends THREE.Object3D {
         this.add(ringFinal);
     }
 
-    crearGradas(){
+    crearGradas() {
         let matR = new THREE.MeshStandardMaterial({ color: 0xFF0000, metalness: 0.8, roughness: 0.2 });
         let matA = new THREE.MeshStandardMaterial({ color: 0x0000FF, metalness: 0.8, roughness: 0.2 });
 
@@ -198,12 +196,12 @@ class Tablero extends THREE.Object3D {
         let gradaAGeo2 = new THREE.BoxGeometry(8.5, 1, 1.5);
         gradaAGeo2.translate(3.5, -0.5, 10.5);
 
-        // Unir solo las gradas con CSG
         let brush1 = new CSG.Brush(gradaG, matR);
         let brush2 = new CSG.Brush(gradaAGeo, matR);
         let brush3 = new CSG.Brush(gradaG2, matA);
         let brush4 = new CSG.Brush(gradaAGeo2, matA);
 
+        // Unión
         const evaluador = new CSG.Evaluator();
         let gradasR = evaluador.evaluate(brush1, brush2, CSG.ADDITION);
         let gradasA = evaluador.evaluate(brush3, brush4, CSG.ADDITION);
@@ -213,11 +211,12 @@ class Tablero extends THREE.Object3D {
 
         gradasR.castShadow = true;
         gradasR.receiveShadow = true;
-        
+
         this.add(gradasR);
         this.add(gradasA);
     }
 
+    // Devuelve las casillas libres y que no tienen piezas del equipo
     getCasillasLibres(isBlanca) {
         let casillasLibres = [];
 
@@ -248,6 +247,7 @@ class Tablero extends THREE.Object3D {
         return casillasLibres;
     }
 
+    // Devuelve las casillas ocupadas por piezas
     getCasillasOcupadas() {
         let casillasOcupadas = [];
 
@@ -262,6 +262,8 @@ class Tablero extends THREE.Object3D {
         return casillasOcupadas;
     }
 
+
+    // Devuelve las casillas transitables por una pieza
     getPosiblesMovimientos(pieza) {
         let casillasLibres = this.getCasillasLibres(pieza.isBlanca);
         let casillasOcupadas = this.getCasillasOcupadas();
@@ -273,16 +275,16 @@ class Tablero extends THREE.Object3D {
             let y = movimientos[i][1];
 
             // Verificar si la casilla contiene una pieza enemiga
-            if (this.tablero[x][y].pieza != null && this.tablero[x][y].pieza.isBlanca !== pieza.isBlanca) {
-                this.tablero[x][y].setColorComer(); // Pintar en azul si es una pieza enemiga
-            } else {
-                this.tablero[x][y].setColorNavegable(); // Pintar en verde si es una casilla libre
-            }
+            if (this.tablero[x][y].pieza != null && this.tablero[x][y].pieza.isBlanca !== pieza.isBlanca)
+                this.tablero[x][y].setColorComer();
+
+            else this.tablero[x][y].setColorNavegable();
         }
 
         return movimientos;
     }
 
+    // Devuelve los colores originales de las casillas
     repaint() {
         this.tablero.forEach((fila) => {
             fila.forEach((casilla) => {

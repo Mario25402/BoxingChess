@@ -30,14 +30,18 @@ class Casilla extends THREE.Object3D{
                     let fila = Math.floor(scene.capturadasBlancas / 8);
                     let col = scene.capturadasBlancas % 8;
                     let y = (fila === 0) ? -0.5 : 0; // Primera fila a -0.5, segunda a 0
+
                     this.pieza.position.set(
                         baseX + 7 - col * offset,
                         y,
                         baseZ + 8 + 1.25 + fila
                     );
+
                     this.pieza.rotation.y = THREE.MathUtils.degToRad(90);
                     scene.capturadasBlancas++;
-                } else {
+                } 
+                
+                else {
                     let fila = Math.floor(scene.capturadasNegras / 8);
                     let col = scene.capturadasNegras % 8;
                     let y = (fila === 0) ? -0.5 : 0; // Primera fila a -0.5, segunda a 0
@@ -49,24 +53,24 @@ class Casilla extends THREE.Object3D{
                     this.pieza.rotation.y = THREE.MathUtils.degToRad(90);
                     scene.capturadasNegras++;
                 }
+
                 this.pieza.userData.capturada = true;
                 this.remove(this.pieza);
                 scene.add(this.pieza);
-            } else {
-                this.remove(this.pieza);
-            }
+            } 
+            
+            else this.remove(this.pieza);
             this.pieza = null;
         }
     }
 
     ponerPieza(pieza) {
-        if (this.pieza != null) {
-            this.remove(this.pieza); // Eliminar la pieza existente si hay una
-        }
-    
+        if (this.pieza != null)
+            this.remove(this.pieza); // Eliminar pieza si la hay
+
         this.pieza = pieza;
-        this.pieza.position.set(this.posI, 0, this.posJ); // Actualizar la posición de la pieza en el tablero
-        this.add(this.pieza); // Añadir la pieza a la casilla
+        this.pieza.position.set(this.posI, 0, this.posJ); // Actualizar posición
+        this.add(this.pieza);
     }
 
     setPieza(pieza, isBlanca, DETAIL_LEVEL){

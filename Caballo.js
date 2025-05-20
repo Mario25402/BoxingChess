@@ -10,14 +10,15 @@ class Caballo extends THREE.Object3D {
 		const loader = new THREE.TextureLoader();
 		const bumpTexture = loader.load('./imgs/pie.png');
 
-
 		if (isBlanca) {
 			material = new THREE.MeshStandardMaterial({
 				color: 0xFBDBB5,
 				bumpMap: bumpTexture,
 				bumpScale: 1,
 			});
-		} else {
+		}
+
+		else {
 			material = new THREE.MeshStandardMaterial({
 				color: 0x222222,
 				bumpMap: bumpTexture,
@@ -29,9 +30,9 @@ class Caballo extends THREE.Object3D {
 		objLoader.load('./obj/caballo1.obj', (object) => {
 			object.traverse((child) => {
 				if (child.isMesh) {
-					child.material = material; // Asignar el material
-					child.castShadow = true;   // Proyecta sombra
-            		child.receiveShadow = true;
+					child.material = material;
+					child.castShadow = true;
+					child.receiveShadow = true;
 				}
 			});
 			object.position.set(0, 0, 0);
@@ -44,15 +45,15 @@ class Caballo extends THREE.Object3D {
 		guantes.scale.set(0.4, 0.4, 0.4);
 		guantes.rotateY(THREE.MathUtils.degToRad(-90));
 		guantes.guante.position.set(-3, 2.2, -1)
-		guantes.guante2.position.set(3, 2.2, -1) 
-		
+		guantes.guante2.position.set(3, 2.2, -1)
+
 		this.add(guantes);
 	}
 
 	getMovimientos(casillaActual, casillasOcupadas) {
 		const [x, y] = casillaActual;
 		const movimientos = [];
-	
+
 		// Posibles movimientos en forma de "L"
 		const posiblesMovimientos = [
 			[x + 2, y + 1], // Abajo-derecha
@@ -64,19 +65,18 @@ class Caballo extends THREE.Object3D {
 			[x - 1, y + 2], // Izquierda-abajo
 			[x - 1, y - 2]  // Izquierda-arriba
 		];
-	
+
 		for (const [nx, ny] of posiblesMovimientos) {
 			// Verificar que el movimiento esté dentro del tablero
 			if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
 				// Verificar si la casilla está ocupada
-				if (!casillasOcupadas.some(([ox, oy]) => ox === nx && oy === ny)) {
+				if (!casillasOcupadas.some(([ox, oy]) => ox === nx && oy === ny))
 					movimientos.push([nx, ny]); // Casilla libre
-				} else {
-					movimientos.push([nx, ny]); // Puede capturar la pieza enemiga
-				}
+
+				else movimientos.push([nx, ny]); // Puede capturar la pieza enemiga
 			}
 		}
-	
+
 		return movimientos;
 	}
 }

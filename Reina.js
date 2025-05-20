@@ -18,14 +18,15 @@ class Reina extends THREE.Object3D {
 		const loader = new THREE.TextureLoader();
 		const bumpTexture = loader.load('./imgs/pie.png');
 
-
 		if (isBlanca) {
 			material = new THREE.MeshStandardMaterial({
 				color: 0xFBDBB5,
 				bumpMap: bumpTexture,
 				bumpScale: 1,
 			});
-		} else {
+		}
+
+		else {
 			material = new THREE.MeshStandardMaterial({
 				color: 0x222222,
 				bumpMap: bumpTexture,
@@ -73,8 +74,8 @@ class Reina extends THREE.Object3D {
 		const amplitud = 0;
 		const frecuencia = 6;
 		const numPuntos = 100;
-		
-		for (let i = 0; i <= numPuntos; i++){
+
+		for (let i = 0; i <= numPuntos; i++) {
 			const angulo = (i / numPuntos) * Math.PI * 2;
 			const x = Math.cos(angulo) * (radio + amplitud * Math.sin(frecuencia * angulo));
 			const y = Math.sin(angulo) * (radio + amplitud * Math.sin(frecuencia * angulo));
@@ -92,17 +93,17 @@ class Reina extends THREE.Object3D {
 
 		geom = new THREE.ExtrudeGeometry(shape, opt);
 		geom.rotateX(MathUtils.degToRad(90));
-		geom.translate(0, 0.8+alturaCuerpo, 0);
+		geom.translate(0, 0.8 + alturaCuerpo, 0);
 		const bordeCuello = new CSG.Brush(geom, material);
 
 		// Esfera Grande
 		geom = new THREE.SphereGeometry(1.1);
-		geom.translate(0, 0.7+alturaCuerpo, 0);
+		geom.translate(0, 0.7 + alturaCuerpo, 0);
 		const esferaGrande = new CSG.Brush(geom, material);
 
 		// Esfera Pequeña
 		geom = new THREE.SphereGeometry(0.3);
-		geom.translate(0, 1.95+alturaCuerpo, 0);
+		geom.translate(0, 1.95 + alturaCuerpo, 0);
 		const esferaPequeña = new CSG.Brush(geom, material);
 
 		// Unión
@@ -111,40 +112,35 @@ class Reina extends THREE.Object3D {
 		reina = evaluador.evaluate(reina, esferaPequeña, CSG.ADDITION);
 		reina = evaluador.evaluate(reina, cuerpo, CSG.ADDITION);
 
-		const geomReina = reina.geometry; 
+		const geomReina = reina.geometry;
 		const meshReina = new THREE.Mesh(geomReina, material);
 		this.add(meshReina);
 
-		// --- NUEVOS BRAZOS ARTICULADOS ---
-        const brazoIzq = new Guan_R(isBlanca, DETAIL_LEVEL);
-        const brazoDer = new Guan_R(isBlanca, DETAIL_LEVEL);
-
-        // Posiciona los brazos (ajusta según tu modelo)
-		brazoIzq.position.set(0, 6.25, 0.75);  // izquierda
-		brazoIzq.scale.set(-0.5,0.5,0.5);
-        /* brazoIzq.rotation.y = Math.PI;     // Gira el derecho para que apunte hacia afuera
-		brazoIzq.rotation.z = MathUtils.degToRad(180);
-		*/
+		// Brazos
+		const brazoIzq = new Guan_R(isBlanca, DETAIL_LEVEL);
+		brazoIzq.position.set(0, 6.25, 0.75);
+		brazoIzq.scale.set(-0.5, 0.5, 0.5);
 		brazoIzq.rotation.x = MathUtils.degToRad(-22);
 
-        brazoDer.position.set(0, 6.25, -0.75);  // Derecha
-		brazoDer.scale.set(0.5,0.5,0.5);
-        brazoDer.rotation.y = Math.PI;     // Gira el derecho para que apunte hacia afuera
+		const brazoDer = new Guan_R(isBlanca, DETAIL_LEVEL);
+		brazoDer.position.set(0, 6.25, -0.75);
+		brazoDer.scale.set(0.5, 0.5, 0.5);
+		brazoDer.rotation.y = Math.PI;
 		brazoDer.rotation.x = MathUtils.degToRad(22);
 
-        this.add(brazoIzq);
-        this.add(brazoDer);
+		this.add(brazoIzq);
+		this.add(brazoDer);
 
-        // Si quieres acceder a los brazos después:
-        this.brazoIzq = brazoIzq;
-        this.brazoDer = brazoDer;
+		// Acceso rapido desde otras clases
+		this.brazoIzq = brazoIzq;
+		this.brazoDer = brazoDer;
 
 	}
 
 	getMovimientos(casillaActual, casillasOcupadas) {
 		const [x, y] = casillaActual;
 		const movimientos = [];
-	
+
 		// Direcciones posibles: combinando Torre (líneas rectas) y Alfil (diagonales)
 		const direcciones = [
 			[1, 0],   // Abajo
@@ -156,26 +152,26 @@ class Reina extends THREE.Object3D {
 			[1, -1],  // Diagonal abajo-izquierda
 			[-1, 1]   // Diagonal arriba-derecha
 		];
-	
+
 		for (const [dx, dy] of direcciones) {
 			let i = x + dx;
 			let j = y + dy;
-	
+
 			while (i >= 0 && i < 8 && j >= 0 && j < 8) {
 				const casilla = [i, j];
-	
+
 				// Si la casilla está ocupada, detener el movimiento
 				if (casillasOcupadas.some(([ox, oy]) => ox === i && oy === j)) {
 					movimientos.push(casilla); // Puede capturar la pieza enemiga
 					break;
 				}
-	
+
 				movimientos.push(casilla);
 				i += dx;
 				j += dy;
 			}
 		}
-	
+
 		return movimientos;
 	}
 
@@ -202,9 +198,10 @@ class Reina extends THREE.Object3D {
 
 		// 2. Echa el brazo para atrás en Y
 		const atras = new TWEEN.Tween({ y: rotHombroIniY, c: rotCodoIni, yc: rotCodoIniY })
-			.to({ y: THREE.MathUtils.degToRad(40),
-				  c: THREE.MathUtils.degToRad(20),
-				  yc: THREE.MathUtils.degToRad(100)
+			.to({
+				y: THREE.MathUtils.degToRad(40),
+				c: THREE.MathUtils.degToRad(20),
+				yc: THREE.MathUtils.degToRad(100)
 			}, 700)
 			.onUpdate(({ y, c, yc }) => {
 				hombro.rotation.y = y;
@@ -214,8 +211,9 @@ class Reina extends THREE.Object3D {
 
 		// 3. Puñetazo: vuelve el brazo hacia adelante en Y y flexiona el codo
 		const punetazo = new TWEEN.Tween({ y: THREE.MathUtils.degToRad(40), c: THREE.MathUtils.degToRad(20) })
-			.to({ y: rotHombroIniY - 0.25,
-				  c: THREE.MathUtils.degToRad(-10)
+			.to({
+				y: rotHombroIniY - 0.25,
+				c: THREE.MathUtils.degToRad(-10)
 			}, 400)
 			.onUpdate(({ y, c }) => {
 				hombro.rotation.y = y;
@@ -226,26 +224,26 @@ class Reina extends THREE.Object3D {
 			});
 
 		// 4. Regresa a la posición original (Y, C, Z)
-		const regreso = new TWEEN.Tween({ 
-			y: rotHombroIniY - 0.25, 
-			z: -Math.PI / 2, 
-			c: THREE.MathUtils.degToRad(-10), 
+		const regreso = new TWEEN.Tween({
+			y: rotHombroIniY - 0.25,
+			z: -Math.PI / 2,
+			c: THREE.MathUtils.degToRad(-10),
 			yc: codo.rotation.y
 		})
-		.to({ 
-			y: rotHombroIniY,
-			z: rotHombroIniZ,
-			c: rotCodoIni,
-			yc: rotCodoIniY
-		}, 1000)
-		.onUpdate(({ y, z, c, yc }) => {
-			hombro.rotation.y = y;
-			hombro.rotation.z = z;
-			codo.rotation.x = c;
-			codo.rotation.y = yc;
-		});
-			
- 
+			.to({
+				y: rotHombroIniY,
+				z: rotHombroIniZ,
+				c: rotCodoIni,
+				yc: rotCodoIniY
+			}, 1000)
+			.onUpdate(({ y, z, c, yc }) => {
+				hombro.rotation.y = y;
+				hombro.rotation.z = z;
+				codo.rotation.x = c;
+				codo.rotation.y = yc;
+			});
+
+
 		subir.chain(atras);
 		atras.chain(punetazo);
 		punetazo.chain(regreso);

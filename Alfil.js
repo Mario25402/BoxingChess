@@ -15,14 +15,15 @@ class Alfil extends THREE.Object3D {
 		const loader = new THREE.TextureLoader();
 		const bumpTexture = loader.load('./imgs/pie.png');
 
-
 		if (isBlanca) {
 			material = new THREE.MeshStandardMaterial({
 				color: 0xFBDBB5,
 				bumpMap: bumpTexture,
 				bumpScale: 1,
 			});
-		} else {
+		}
+
+		else {
 			material = new THREE.MeshStandardMaterial({
 				color: 0x222222,
 				bumpMap: bumpTexture,
@@ -101,7 +102,6 @@ class Alfil extends THREE.Object3D {
 		alfil = evaluador.evaluate(alfil, collar2, CSG.ADDITION);
 		alfil = evaluador.evaluate(alfil, collar3, CSG.ADDITION);
 
-		//this.add(alfil);
 		const geomAlfil = alfil.geometry
 		const meshAlfil = new THREE.Mesh(geomAlfil, material);
 		this.add(meshAlfil);
@@ -111,14 +111,14 @@ class Alfil extends THREE.Object3D {
 		guantes.rotation.set(0, MathUtils.degToRad(90), 0);
 		guantes.guante.position.set(-3.5, 3, 0)
 		guantes.guante2.position.set(3.5, 3, 0)
-		
+
 		this.add(guantes);
 	}
 
 	getMovimientos(casillaActual, casillasOcupadas) {
 		const [x, y] = casillaActual;
 		const movimientos = [];
-	
+
 		// Direcciones diagonales: [dx, dy]
 		const direcciones = [
 			[1, 1],   // Diagonal abajo-derecha
@@ -126,27 +126,27 @@ class Alfil extends THREE.Object3D {
 			[1, -1],  // Diagonal abajo-izquierda
 			[-1, 1]   // Diagonal arriba-derecha
 		];
-	
+
 		for (const [dx, dy] of direcciones) {
 			let i = x + dx;
 			let j = y + dy;
-	
+
 			// Continuar en la dirección mientras esté dentro del tablero
 			while (i >= 0 && i < 8 && j >= 0 && j < 8) {
 				const casilla = [i, j];
-	
+
 				// Si la casilla está ocupada, detener el movimiento
 				if (casillasOcupadas.some(([ox, oy]) => ox === i && oy === j)) {
 					movimientos.push(casilla); // Puede capturar la pieza enemiga
 					break;
 				}
-	
+
 				movimientos.push(casilla); // Casilla libre
 				i += dx;
 				j += dy;
 			}
 		}
-	
+
 		return movimientos;
 	}
 }

@@ -8,17 +8,18 @@ class Guan_R extends THREE.Object3D {
 
         // Materiales
         let material, material2;
-        if (this.isBlanca){
-            material = new THREE.MeshStandardMaterial({color: 0xFF0000});
-            material2 = new THREE.MeshStandardMaterial({color: 0xFBDBB5});
-        } else {
-            material = new THREE.MeshStandardMaterial({color: 0x0000FF});
-            material2 = new THREE.MeshStandardMaterial({color: 0x222222});
+        if (this.isBlanca) {
+            material = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+            material2 = new THREE.MeshStandardMaterial({ color: 0xFBDBB5 });
+        }
+
+        else {
+            material = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+            material2 = new THREE.MeshStandardMaterial({ color: 0x222222 });
         }
 
         const evaluador = new CSG.Evaluator();
 
-        // --- Geometría del guante (igual que Guante.js) ---
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
         shape.quadraticCurveTo(-0.18, 0.46, -0.23, 0.96);
@@ -40,6 +41,7 @@ class Guan_R extends THREE.Object3D {
             bevelSize: 0.3,
             bevelSegments: DETAIL_LEVEL,
         };
+
         const geometry = new THREE.ExtrudeGeometry(shape, options);
         const shapeBrush = new CSG.Brush(geometry, material);
 
@@ -64,52 +66,50 @@ class Guan_R extends THREE.Object3D {
         let puno = evaluador.evaluate(shapeBrush, cilBrush, CSG.ADDITION);
         let guante = evaluador.evaluate(dedo, puno, CSG.ADDITION);
 
-        // --- Brazo superior ---
+        // Brazo Superior
         const brazoSupLength = 5;
         const brazoSup = new THREE.CylinderGeometry(0.3, 0.3, brazoSupLength, 16);
-        // El cilindro por defecto tiene el centro en el medio, así que para que el origen sea la punta superior:
-        brazoSup.translate(0, -brazoSupLength/2, 0);
+
+        brazoSup.translate(0, -brazoSupLength / 2, 0);
         const brazoSupMesh = new THREE.Mesh(brazoSup, material2);
 
-        // --- Pivote del hombro (origen) ---
+        // Hombro
         const pivoteHombro = new THREE.Object3D();
         pivoteHombro.position.set(0, 0, 0);
 
-        // --- Rotar el brazo superior y calcular la posición del codo ---
-        const angulo = -30 * Math.PI / 180; // -30 grados en radianes
+        // Rotación
+        const angulo = -30 * Math.PI / 180;
         brazoSupMesh.rotation.x = angulo;
 
-        // Calcula la posición final del brazo superior (donde va el codo)
+        // Codo
         const codoPos = new THREE.Vector3(0, -brazoSupLength, 0);
-        codoPos.applyAxisAngle(new THREE.Vector3(1,0,0), angulo);
+        codoPos.applyAxisAngle(new THREE.Vector3(1, 0, 0), angulo);
 
-        // --- Pivote del codo (hijo del hombro) ---
+        // Pivote del codo
         const pivoteCodo = new THREE.Object3D();
         pivoteCodo.position.copy(codoPos);
 
-        // --- Esfera del codo ---
+        // Esfera del codo
         const codoGeo = new THREE.SphereGeometry(0.5, DETAIL_LEVEL, DETAIL_LEVEL);
         const codoMesh = new THREE.Mesh(codoGeo, material2);
         codoMesh.position.set(0, 0, 0); // el codo está en el origen del pivoteCodo
 
-        // --- Brazo inferior (hijo del codo) ---
+        // Brazo inferior
         const brazoInfLength = 3;
         const brazoInf = new THREE.CylinderGeometry(0.3, 0.3, brazoInfLength, 16);
-        brazoInf.translate(0, -brazoInfLength/2, 0);
+        brazoInf.translate(0, -brazoInfLength / 2, 0);
         const brazoInfMesh = new THREE.Mesh(brazoInf, material2);
+        brazoInfMesh.rotation.x = 0;
 
-        // El brazo inferior debe salir en la misma dirección que el brazo superior
-        brazoInfMesh.rotation.x = 0; // Empieza alineado con el pivoteCodo, puedes rotarlo para doblar el codo
-
-        // --- Guante mesh (hijo del codo, al final del brazo inferior) ---
+        // Guante
         const meshGuante = new THREE.Mesh(guante.geometry, material);
         meshGuante.position.y = -brazoInfLength - 0.5; // al final del brazo inferior
         meshGuante.position.x = 0.5;
         meshGuante.rotation.x = Math.PI; // <-- Gira el guante 180 grados para que mire hacia abajo
-        
+
         this.colorOriginal = material.color.getHex();
 
-        // --- Montar jerarquía ---
+        // Jerarquía
         pivoteCodo.add(codoMesh);
         pivoteCodo.add(brazoInfMesh);
         pivoteCodo.add(meshGuante);
@@ -117,14 +117,9 @@ class Guan_R extends THREE.Object3D {
         pivoteHombro.add(brazoSupMesh);
         pivoteHombro.add(pivoteCodo);
 
-        // --- Ejes visuales ---
-        /* pivoteHombro.add(new THREE.AxesHelper(2)); // hombro
-        pivoteCodo.add(new THREE.AxesHelper(1.5)); // codo */
-
-        // --- Añadir a la escena ---
         this.add(pivoteHombro);
 
-        // --- Referencias para animar ---
+        // Referencias animación
         this.pivoteHombro = pivoteHombro;
         this.pivoteCodo = pivoteCodo;
         this.brazoSupMesh = brazoSupMesh;
@@ -132,7 +127,8 @@ class Guan_R extends THREE.Object3D {
         this.meshGuante = meshGuante;
     }
 
-    repaint(){
+    // Devuelve el color original del guante
+    repaint() {
         this.meshGuante.material.color.set(this.colorOriginal);
     }
 }
