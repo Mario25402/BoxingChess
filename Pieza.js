@@ -191,12 +191,6 @@ class Pieza extends THREE.Object3D {
         const lanzar = new TWEEN.Tween(scene.oponente.position)
             .to({ x: scene.oponente.position.x + direccion, y: 2, z: scene.oponente.position.z + direccion }, 500)
             .easing(TWEEN.Easing.Quadratic.Out)
-            .onComplete(() => {
-                if (scene.oponente.parent instanceof Casilla)
-                    scene.oponente.parent.quitarPieza(true); // Es captura
-
-                scene.oponente = null; // Limpiar la referencia
-            });
 
         const mover = new TWEEN.Tween(this.position)
             .to({ x: nuevaPosPelea.x + acercamiento, z: nuevaPosPelea.z }, 700)
@@ -259,6 +253,11 @@ class Pieza extends THREE.Object3D {
         });
 
         lanzar.onComplete(() => {
+            if (scene.oponente.parent instanceof Casilla)
+                    scene.oponente.parent.quitarPieza(true); // Es captura
+
+                scene.oponente = null; // Limpiar la referencia
+
             if (scene.activeCamera === scene.golpeCamera)
                 scene.activeCamera = scene.cameraBlancas;
         });
